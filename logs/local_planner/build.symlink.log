@@ -1,0 +1,13 @@
+Symlinking /home/isaac/uav_avoidance/devel/include/local_planner/LocalPlannerNodeConfig.h
+Symlinking /home/isaac/uav_avoidance/devel/lib/liblocal_planner.so
+Symlinking /home/isaac/uav_avoidance/devel/lib/liblocal_planner_nodelet.so
+Symlinking /home/isaac/uav_avoidance/devel/lib/python2.7/dist-packages/local_planner/__init__.py
+Symlinking /home/isaac/uav_avoidance/devel/lib/python2.7/dist-packages/local_planner/cfg/__init__.py
+Symlinking /home/isaac/uav_avoidance/devel/lib/python2.7/dist-packages/local_planner/cfg/LocalPlannerNodeConfig.py
+Symlinking /home/isaac/uav_avoidance/devel/lib/local_planner/local_planner_node
+Symlinking /home/isaac/uav_avoidance/devel/lib/pkgconfig/local_planner.pc
+Symlinking /home/isaac/uav_avoidance/devel/share/local_planner/cmake/local_plannerConfig-version.cmake
+Symlinking /home/isaac/uav_avoidance/devel/share/local_planner/cmake/local_plannerConfig.cmake
+Symlinking /home/isaac/uav_avoidance/devel/share/local_planner/docs/LocalPlannerNodeConfig.wikidoc
+Symlinking /home/isaac/uav_avoidance/devel/share/local_planner/docs/LocalPlannerNodeConfig.dox
+Symlinking /home/isaac/uav_avoidance/devel/share/local_planner/docs/LocalPlannerNodeConfig-usage.dox

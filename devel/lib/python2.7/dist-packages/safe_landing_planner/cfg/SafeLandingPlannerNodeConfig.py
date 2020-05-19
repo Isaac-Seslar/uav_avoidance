@@ -1,0 +1,1 @@
+/home/isaac/uav_avoidance/devel/.private/safe_landing_planner/lib/python2.7/dist-packages/safe_landing_planner/cfg/SafeLandingPlannerNodeConfig.py

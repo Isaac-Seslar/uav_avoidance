@@ -1,0 +1,8 @@
+prefix=/home/isaac/uav_avoidance/install
+
+Name: global_planner
+Description: Description of global_planner
+Version: 0.0.0
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib 
+Requires: roscpp rospy std_msgs geometry_msgs sensor_msgs message_runtime tf
