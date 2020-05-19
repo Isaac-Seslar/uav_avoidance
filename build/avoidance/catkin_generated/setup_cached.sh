@@ -8,6 +8,8 @@
 
 # modified environment variables
 export CMAKE_PREFIX_PATH="/home/isaac/uav_avoidance/devel/.private/avoidance:$CMAKE_PREFIX_PATH"
+export LD_LIBRARY_PATH="/home/isaac/uav_avoidance/devel/.private/avoidance/lib:$LD_LIBRARY_PATH"
+export PKG_CONFIG_PATH="/home/isaac/uav_avoidance/devel/.private/avoidance/lib/pkgconfig:$PKG_CONFIG_PATH"
 export PWD="/home/isaac/uav_avoidance/build/avoidance"
 export ROSLISP_PACKAGE_DIRECTORIES="/home/isaac/uav_avoidance/devel/.private/avoidance/share/common-lisp:$ROSLISP_PACKAGE_DIRECTORIES"
 export ROS_PACKAGE_PATH="/home/isaac/uav_avoidance/src/avoidance/avoidance:$ROS_PACKAGE_PATH"
