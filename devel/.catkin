@@ -1,1 +1,1 @@
-/home/isaac/uav_avoidance/src/uav_flight
+/home/isaac/uav_avoidance/src/avoidance/avoidance;/home/isaac/uav_avoidance/src/avoidance/global_planner;/home/isaac/uav_avoidance/src/avoidance/local_planner;/home/isaac/uav_avoidance/src/avoidance/safe_landing_planner;/home/isaac/uav_avoidance/src/uav_flight

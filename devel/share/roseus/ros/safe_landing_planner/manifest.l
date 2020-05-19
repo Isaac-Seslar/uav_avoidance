@@ -1,0 +1,1 @@
+/home/isaac/uav_avoidance/devel/.private/safe_landing_planner/share/roseus/ros/safe_landing_planner/manifest.l
