@@ -1,0 +1,8 @@
+prefix=/home/isaac/uav_avoidance/devel/.private/uav_flight
+
+Name: uav_flight
+Description: Description of uav_flight
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib -luav_flight
+Requires: gazebo_msgs gazebo_ros geometry_msgs mavros mavros_msgs nav_msgs roscpp rospy sensor_msgs std_msgs tf

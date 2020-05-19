@@ -1,0 +1,1 @@
+/home/isaac/uav_avoidance/devel/.private/uav_flight/lib/pkgconfig/uav_flight.pc

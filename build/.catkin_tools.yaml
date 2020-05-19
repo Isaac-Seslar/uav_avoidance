@@ -1,0 +1,6 @@
+devel_space: /home/isaac/uav_avoidance/devel
+install: false
+install_space: /home/isaac/uav_avoidance/install
+profile: default
+source_space: /home/isaac/uav_avoidance/src
+workspace: /home/isaac/uav_avoidance

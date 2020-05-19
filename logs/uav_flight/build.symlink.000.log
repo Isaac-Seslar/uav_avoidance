@@ -1,0 +1,4 @@
+Symlinking /home/isaac/uav_avoidance/devel/lib/uav_flight/uav_flight_node
+Symlinking /home/isaac/uav_avoidance/devel/lib/pkgconfig/uav_flight.pc
+Symlinking /home/isaac/uav_avoidance/devel/share/uav_flight/cmake/uav_flightConfig.cmake
+Symlinking /home/isaac/uav_avoidance/devel/share/uav_flight/cmake/uav_flightConfig-version.cmake
