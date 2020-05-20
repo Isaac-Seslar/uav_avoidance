@@ -1,0 +1,1 @@
+/home/isaac/uav_avoidance/devel/.private/global_planner/share/roseus/ros/global_planner/msg/PathWithRiskMsg.l
