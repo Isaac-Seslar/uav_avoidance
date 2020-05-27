@@ -185,7 +185,7 @@ foreach(t ${local_planner_EXPORTED_TARGETS})
   endif()
 endforeach()
 
-set(depends "roscpp;rospy;std_msgs;mavros_msgs;geometry_msgs;sensor_msgs;message_runtime;tf;avoidance")
+set(depends "roscpp;rospy;std_msgs;mavros_msgs;geometry_msgs;sensor_msgs;message_runtime;tf;avoidance;gazebo_msgs;gazebo_ros;nav_msgs;sensor_msgs;std_msgs")
 foreach(depend ${depends})
   string(REPLACE " " ";" depend_list ${depend})
   # the package name of the dependency must be kept in a unique variable so that it is not overwritten in recursive calls

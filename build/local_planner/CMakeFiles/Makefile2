@@ -196,6 +196,8 @@ clean: CMakeFiles/local_planner-test.dir/clean
 
 # All Build rule for target.
 CMakeFiles/local_planner.dir/all: CMakeFiles/local_planner_gencfg.dir/all
+CMakeFiles/local_planner.dir/all: CMakeFiles/gazebo_ros_gencfg.dir/all
+CMakeFiles/local_planner.dir/all: CMakeFiles/gazebo_msgs_generate_messages_eus.dir/all
 CMakeFiles/local_planner.dir/all: CMakeFiles/visualization_msgs_generate_messages_py.dir/all
 CMakeFiles/local_planner.dir/all: CMakeFiles/visualization_msgs_generate_messages_nodejs.dir/all
 CMakeFiles/local_planner.dir/all: CMakeFiles/visualization_msgs_generate_messages_eus.dir/all
@@ -214,6 +216,7 @@ CMakeFiles/local_planner.dir/all: CMakeFiles/uuid_msgs_generate_messages_cpp.dir
 CMakeFiles/local_planner.dir/all: CMakeFiles/geographic_msgs_generate_messages_lisp.dir/all
 CMakeFiles/local_planner.dir/all: CMakeFiles/geographic_msgs_generate_messages_eus.dir/all
 CMakeFiles/local_planner.dir/all: CMakeFiles/geographic_msgs_generate_messages_cpp.dir/all
+CMakeFiles/local_planner.dir/all: CMakeFiles/gazebo_msgs_generate_messages_lisp.dir/all
 CMakeFiles/local_planner.dir/all: CMakeFiles/diagnostic_msgs_generate_messages_py.dir/all
 CMakeFiles/local_planner.dir/all: CMakeFiles/diagnostic_msgs_generate_messages_nodejs.dir/all
 CMakeFiles/local_planner.dir/all: CMakeFiles/diagnostic_msgs_generate_messages_lisp.dir/all
@@ -225,6 +228,7 @@ CMakeFiles/local_planner.dir/all: CMakeFiles/topic_tools_generate_messages_cpp.d
 CMakeFiles/local_planner.dir/all: CMakeFiles/geometry_msgs_generate_messages_lisp.dir/all
 CMakeFiles/local_planner.dir/all: CMakeFiles/geometry_msgs_generate_messages_py.dir/all
 CMakeFiles/local_planner.dir/all: CMakeFiles/dynamic_reconfigure_generate_messages_py.dir/all
+CMakeFiles/local_planner.dir/all: CMakeFiles/gazebo_msgs_generate_messages_cpp.dir/all
 CMakeFiles/local_planner.dir/all: CMakeFiles/dynamic_reconfigure_generate_messages_lisp.dir/all
 CMakeFiles/local_planner.dir/all: CMakeFiles/pcl_msgs_generate_messages_cpp.dir/all
 CMakeFiles/local_planner.dir/all: CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/all
@@ -235,6 +239,7 @@ CMakeFiles/local_planner.dir/all: CMakeFiles/tf_generate_messages_nodejs.dir/all
 CMakeFiles/local_planner.dir/all: CMakeFiles/nav_msgs_generate_messages_cpp.dir/all
 CMakeFiles/local_planner.dir/all: CMakeFiles/sensor_msgs_generate_messages_lisp.dir/all
 CMakeFiles/local_planner.dir/all: CMakeFiles/std_msgs_generate_messages_cpp.dir/all
+CMakeFiles/local_planner.dir/all: CMakeFiles/gazebo_msgs_generate_messages_py.dir/all
 CMakeFiles/local_planner.dir/all: CMakeFiles/uuid_msgs_generate_messages_py.dir/all
 CMakeFiles/local_planner.dir/all: CMakeFiles/geographic_msgs_generate_messages_py.dir/all
 CMakeFiles/local_planner.dir/all: CMakeFiles/roscpp_generate_messages_cpp.dir/all
@@ -253,6 +258,7 @@ CMakeFiles/local_planner.dir/all: CMakeFiles/roscpp_generate_messages_py.dir/all
 CMakeFiles/local_planner.dir/all: CMakeFiles/dynamic_reconfigure_generate_messages_nodejs.dir/all
 CMakeFiles/local_planner.dir/all: CMakeFiles/trajectory_msgs_generate_messages_lisp.dir/all
 CMakeFiles/local_planner.dir/all: CMakeFiles/bond_generate_messages_cpp.dir/all
+CMakeFiles/local_planner.dir/all: CMakeFiles/gazebo_msgs_generate_messages_nodejs.dir/all
 CMakeFiles/local_planner.dir/all: CMakeFiles/rosgraph_msgs_generate_messages_eus.dir/all
 CMakeFiles/local_planner.dir/all: CMakeFiles/rosgraph_msgs_generate_messages_lisp.dir/all
 CMakeFiles/local_planner.dir/all: CMakeFiles/dynamic_reconfigure_generate_messages_cpp.dir/all
@@ -375,6 +381,70 @@ CMakeFiles/local_planner_gencfg.dir/clean:
 
 # clean rule for target.
 clean: CMakeFiles/local_planner_gencfg.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/gazebo_ros_gencfg.dir
+
+# All Build rule for target.
+CMakeFiles/gazebo_ros_gencfg.dir/all:
+	$(MAKE) -f CMakeFiles/gazebo_ros_gencfg.dir/build.make CMakeFiles/gazebo_ros_gencfg.dir/depend
+	$(MAKE) -f CMakeFiles/gazebo_ros_gencfg.dir/build.make CMakeFiles/gazebo_ros_gencfg.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/isaac/uav_avoidance/build/local_planner/CMakeFiles --progress-num= "Built target gazebo_ros_gencfg"
+.PHONY : CMakeFiles/gazebo_ros_gencfg.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/gazebo_ros_gencfg.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/isaac/uav_avoidance/build/local_planner/CMakeFiles 0
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/gazebo_ros_gencfg.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/isaac/uav_avoidance/build/local_planner/CMakeFiles 0
+.PHONY : CMakeFiles/gazebo_ros_gencfg.dir/rule
+
+# Convenience name for target.
+gazebo_ros_gencfg: CMakeFiles/gazebo_ros_gencfg.dir/rule
+
+.PHONY : gazebo_ros_gencfg
+
+# clean rule for target.
+CMakeFiles/gazebo_ros_gencfg.dir/clean:
+	$(MAKE) -f CMakeFiles/gazebo_ros_gencfg.dir/build.make CMakeFiles/gazebo_ros_gencfg.dir/clean
+.PHONY : CMakeFiles/gazebo_ros_gencfg.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/gazebo_ros_gencfg.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/gazebo_msgs_generate_messages_eus.dir
+
+# All Build rule for target.
+CMakeFiles/gazebo_msgs_generate_messages_eus.dir/all:
+	$(MAKE) -f CMakeFiles/gazebo_msgs_generate_messages_eus.dir/build.make CMakeFiles/gazebo_msgs_generate_messages_eus.dir/depend
+	$(MAKE) -f CMakeFiles/gazebo_msgs_generate_messages_eus.dir/build.make CMakeFiles/gazebo_msgs_generate_messages_eus.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/isaac/uav_avoidance/build/local_planner/CMakeFiles --progress-num= "Built target gazebo_msgs_generate_messages_eus"
+.PHONY : CMakeFiles/gazebo_msgs_generate_messages_eus.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/gazebo_msgs_generate_messages_eus.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/isaac/uav_avoidance/build/local_planner/CMakeFiles 0
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/gazebo_msgs_generate_messages_eus.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/isaac/uav_avoidance/build/local_planner/CMakeFiles 0
+.PHONY : CMakeFiles/gazebo_msgs_generate_messages_eus.dir/rule
+
+# Convenience name for target.
+gazebo_msgs_generate_messages_eus: CMakeFiles/gazebo_msgs_generate_messages_eus.dir/rule
+
+.PHONY : gazebo_msgs_generate_messages_eus
+
+# clean rule for target.
+CMakeFiles/gazebo_msgs_generate_messages_eus.dir/clean:
+	$(MAKE) -f CMakeFiles/gazebo_msgs_generate_messages_eus.dir/build.make CMakeFiles/gazebo_msgs_generate_messages_eus.dir/clean
+.PHONY : CMakeFiles/gazebo_msgs_generate_messages_eus.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/gazebo_msgs_generate_messages_eus.dir/clean
 
 .PHONY : clean
 
@@ -1053,6 +1123,38 @@ clean: CMakeFiles/run_tests_local_planner_gtest_local_planner-test.dir/clean
 .PHONY : clean
 
 #=============================================================================
+# Target rules for target CMakeFiles/gazebo_msgs_generate_messages_lisp.dir
+
+# All Build rule for target.
+CMakeFiles/gazebo_msgs_generate_messages_lisp.dir/all:
+	$(MAKE) -f CMakeFiles/gazebo_msgs_generate_messages_lisp.dir/build.make CMakeFiles/gazebo_msgs_generate_messages_lisp.dir/depend
+	$(MAKE) -f CMakeFiles/gazebo_msgs_generate_messages_lisp.dir/build.make CMakeFiles/gazebo_msgs_generate_messages_lisp.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/isaac/uav_avoidance/build/local_planner/CMakeFiles --progress-num= "Built target gazebo_msgs_generate_messages_lisp"
+.PHONY : CMakeFiles/gazebo_msgs_generate_messages_lisp.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/gazebo_msgs_generate_messages_lisp.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/isaac/uav_avoidance/build/local_planner/CMakeFiles 0
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/gazebo_msgs_generate_messages_lisp.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/isaac/uav_avoidance/build/local_planner/CMakeFiles 0
+.PHONY : CMakeFiles/gazebo_msgs_generate_messages_lisp.dir/rule
+
+# Convenience name for target.
+gazebo_msgs_generate_messages_lisp: CMakeFiles/gazebo_msgs_generate_messages_lisp.dir/rule
+
+.PHONY : gazebo_msgs_generate_messages_lisp
+
+# clean rule for target.
+CMakeFiles/gazebo_msgs_generate_messages_lisp.dir/clean:
+	$(MAKE) -f CMakeFiles/gazebo_msgs_generate_messages_lisp.dir/build.make CMakeFiles/gazebo_msgs_generate_messages_lisp.dir/clean
+.PHONY : CMakeFiles/gazebo_msgs_generate_messages_lisp.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/gazebo_msgs_generate_messages_lisp.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
 # Target rules for target CMakeFiles/diagnostic_msgs_generate_messages_py.dir
 
 # All Build rule for target.
@@ -1435,6 +1537,38 @@ CMakeFiles/dynamic_reconfigure_generate_messages_py.dir/clean:
 
 # clean rule for target.
 clean: CMakeFiles/dynamic_reconfigure_generate_messages_py.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/gazebo_msgs_generate_messages_cpp.dir
+
+# All Build rule for target.
+CMakeFiles/gazebo_msgs_generate_messages_cpp.dir/all:
+	$(MAKE) -f CMakeFiles/gazebo_msgs_generate_messages_cpp.dir/build.make CMakeFiles/gazebo_msgs_generate_messages_cpp.dir/depend
+	$(MAKE) -f CMakeFiles/gazebo_msgs_generate_messages_cpp.dir/build.make CMakeFiles/gazebo_msgs_generate_messages_cpp.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/isaac/uav_avoidance/build/local_planner/CMakeFiles --progress-num= "Built target gazebo_msgs_generate_messages_cpp"
+.PHONY : CMakeFiles/gazebo_msgs_generate_messages_cpp.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/gazebo_msgs_generate_messages_cpp.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/isaac/uav_avoidance/build/local_planner/CMakeFiles 0
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/gazebo_msgs_generate_messages_cpp.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/isaac/uav_avoidance/build/local_planner/CMakeFiles 0
+.PHONY : CMakeFiles/gazebo_msgs_generate_messages_cpp.dir/rule
+
+# Convenience name for target.
+gazebo_msgs_generate_messages_cpp: CMakeFiles/gazebo_msgs_generate_messages_cpp.dir/rule
+
+.PHONY : gazebo_msgs_generate_messages_cpp
+
+# clean rule for target.
+CMakeFiles/gazebo_msgs_generate_messages_cpp.dir/clean:
+	$(MAKE) -f CMakeFiles/gazebo_msgs_generate_messages_cpp.dir/build.make CMakeFiles/gazebo_msgs_generate_messages_cpp.dir/clean
+.PHONY : CMakeFiles/gazebo_msgs_generate_messages_cpp.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/gazebo_msgs_generate_messages_cpp.dir/clean
 
 .PHONY : clean
 
@@ -1851,6 +1985,38 @@ CMakeFiles/run_tests.dir/clean:
 
 # clean rule for target.
 clean: CMakeFiles/run_tests.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/gazebo_msgs_generate_messages_py.dir
+
+# All Build rule for target.
+CMakeFiles/gazebo_msgs_generate_messages_py.dir/all:
+	$(MAKE) -f CMakeFiles/gazebo_msgs_generate_messages_py.dir/build.make CMakeFiles/gazebo_msgs_generate_messages_py.dir/depend
+	$(MAKE) -f CMakeFiles/gazebo_msgs_generate_messages_py.dir/build.make CMakeFiles/gazebo_msgs_generate_messages_py.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/isaac/uav_avoidance/build/local_planner/CMakeFiles --progress-num= "Built target gazebo_msgs_generate_messages_py"
+.PHONY : CMakeFiles/gazebo_msgs_generate_messages_py.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/gazebo_msgs_generate_messages_py.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/isaac/uav_avoidance/build/local_planner/CMakeFiles 0
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/gazebo_msgs_generate_messages_py.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/isaac/uav_avoidance/build/local_planner/CMakeFiles 0
+.PHONY : CMakeFiles/gazebo_msgs_generate_messages_py.dir/rule
+
+# Convenience name for target.
+gazebo_msgs_generate_messages_py: CMakeFiles/gazebo_msgs_generate_messages_py.dir/rule
+
+.PHONY : gazebo_msgs_generate_messages_py
+
+# clean rule for target.
+CMakeFiles/gazebo_msgs_generate_messages_py.dir/clean:
+	$(MAKE) -f CMakeFiles/gazebo_msgs_generate_messages_py.dir/build.make CMakeFiles/gazebo_msgs_generate_messages_py.dir/clean
+.PHONY : CMakeFiles/gazebo_msgs_generate_messages_py.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/gazebo_msgs_generate_messages_py.dir/clean
 
 .PHONY : clean
 
@@ -2562,6 +2728,38 @@ CMakeFiles/bond_generate_messages_cpp.dir/clean:
 
 # clean rule for target.
 clean: CMakeFiles/bond_generate_messages_cpp.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/gazebo_msgs_generate_messages_nodejs.dir
+
+# All Build rule for target.
+CMakeFiles/gazebo_msgs_generate_messages_nodejs.dir/all:
+	$(MAKE) -f CMakeFiles/gazebo_msgs_generate_messages_nodejs.dir/build.make CMakeFiles/gazebo_msgs_generate_messages_nodejs.dir/depend
+	$(MAKE) -f CMakeFiles/gazebo_msgs_generate_messages_nodejs.dir/build.make CMakeFiles/gazebo_msgs_generate_messages_nodejs.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/isaac/uav_avoidance/build/local_planner/CMakeFiles --progress-num= "Built target gazebo_msgs_generate_messages_nodejs"
+.PHONY : CMakeFiles/gazebo_msgs_generate_messages_nodejs.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/gazebo_msgs_generate_messages_nodejs.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/isaac/uav_avoidance/build/local_planner/CMakeFiles 0
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/gazebo_msgs_generate_messages_nodejs.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/isaac/uav_avoidance/build/local_planner/CMakeFiles 0
+.PHONY : CMakeFiles/gazebo_msgs_generate_messages_nodejs.dir/rule
+
+# Convenience name for target.
+gazebo_msgs_generate_messages_nodejs: CMakeFiles/gazebo_msgs_generate_messages_nodejs.dir/rule
+
+.PHONY : gazebo_msgs_generate_messages_nodejs
+
+# clean rule for target.
+CMakeFiles/gazebo_msgs_generate_messages_nodejs.dir/clean:
+	$(MAKE) -f CMakeFiles/gazebo_msgs_generate_messages_nodejs.dir/build.make CMakeFiles/gazebo_msgs_generate_messages_nodejs.dir/clean
+.PHONY : CMakeFiles/gazebo_msgs_generate_messages_nodejs.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/gazebo_msgs_generate_messages_nodejs.dir/clean
 
 .PHONY : clean
 
@@ -3404,6 +3602,8 @@ clean: CMakeFiles/actionlib_msgs_generate_messages_eus.dir/clean
 # All Build rule for target.
 CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/local_planner.dir/all
 CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/local_planner_gencfg.dir/all
+CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/gazebo_ros_gencfg.dir/all
+CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/gazebo_msgs_generate_messages_eus.dir/all
 CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/visualization_msgs_generate_messages_py.dir/all
 CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/visualization_msgs_generate_messages_nodejs.dir/all
 CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/visualization_msgs_generate_messages_eus.dir/all
@@ -3422,6 +3622,7 @@ CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/uuid_msgs_generate_messages
 CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/geographic_msgs_generate_messages_lisp.dir/all
 CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/geographic_msgs_generate_messages_eus.dir/all
 CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/geographic_msgs_generate_messages_cpp.dir/all
+CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/gazebo_msgs_generate_messages_lisp.dir/all
 CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/diagnostic_msgs_generate_messages_py.dir/all
 CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/diagnostic_msgs_generate_messages_nodejs.dir/all
 CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/diagnostic_msgs_generate_messages_lisp.dir/all
@@ -3433,6 +3634,7 @@ CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/topic_tools_generate_messag
 CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/geometry_msgs_generate_messages_lisp.dir/all
 CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/geometry_msgs_generate_messages_py.dir/all
 CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/dynamic_reconfigure_generate_messages_py.dir/all
+CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/gazebo_msgs_generate_messages_cpp.dir/all
 CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/dynamic_reconfigure_generate_messages_lisp.dir/all
 CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/pcl_msgs_generate_messages_cpp.dir/all
 CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/all
@@ -3443,6 +3645,7 @@ CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/tf_generate_messages_nodejs
 CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/nav_msgs_generate_messages_cpp.dir/all
 CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/sensor_msgs_generate_messages_lisp.dir/all
 CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/std_msgs_generate_messages_cpp.dir/all
+CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/gazebo_msgs_generate_messages_py.dir/all
 CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/uuid_msgs_generate_messages_py.dir/all
 CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/geographic_msgs_generate_messages_py.dir/all
 CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/roscpp_generate_messages_cpp.dir/all
@@ -3461,6 +3664,7 @@ CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/roscpp_generate_messages_py
 CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/dynamic_reconfigure_generate_messages_nodejs.dir/all
 CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/trajectory_msgs_generate_messages_lisp.dir/all
 CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/bond_generate_messages_cpp.dir/all
+CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/gazebo_msgs_generate_messages_nodejs.dir/all
 CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/rosgraph_msgs_generate_messages_eus.dir/all
 CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/rosgraph_msgs_generate_messages_lisp.dir/all
 CMakeFiles/local_planner_nodelet.dir/all: CMakeFiles/dynamic_reconfigure_generate_messages_cpp.dir/all

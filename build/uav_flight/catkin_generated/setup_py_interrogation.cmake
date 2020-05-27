@@ -1,0 +1,6 @@
+set(uav_flight_SETUP_PY_VERSION "0.0.0")
+set(uav_flight_SETUP_PY_SCRIPTS "")
+set(uav_flight_SETUP_PY_PACKAGES "uav_flight")
+set(uav_flight_SETUP_PY_PACKAGE_DIRS "src/uav_flight")
+set(uav_flight_SETUP_PY_MODULES "")
+set(uav_flight_SETUP_PY_MODULE_DIRS "")

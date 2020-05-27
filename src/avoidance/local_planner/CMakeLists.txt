@@ -18,7 +18,14 @@ find_package(catkin REQUIRED COMPONENTS
   mavros_msgs
   mavlink
   avoidance
+  gazebo_msgs
+  gazebo_ros
+  geometry_msgs
+  nav_msgs
+  sensor_msgs
+  std_msgs
 )
+
 find_package(PCL 1.7 REQUIRED)
 
 if(DISABLE_SIMULATION)
@@ -107,7 +114,7 @@ generate_dynamic_reconfigure_options(
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES local_planner
-  CATKIN_DEPENDS roscpp rospy std_msgs mavros_msgs geometry_msgs sensor_msgs message_runtime tf avoidance
+  CATKIN_DEPENDS roscpp rospy std_msgs mavros_msgs geometry_msgs sensor_msgs message_runtime tf avoidance gazebo_msgs gazebo_ros nav_msgs sensor_msgs std_msgs
 #  DEPENDS system_lib
 )
 
@@ -142,6 +149,7 @@ set(LOCAL_PLANNER_CPP_FILES   "src/nodes/local_planner.cpp"
                               "src/nodes/planner_functions.cpp"
                               "src/nodes/local_planner_visualization.cpp"
                               "src/utils/trajectory_simulator.cpp"
+#                               "src/nodes/avoid_offb_node.cpp"
 )
 
 add_library(local_planner     "${LOCAL_PLANNER_CPP_FILES}")
@@ -155,7 +163,7 @@ add_dependencies(local_planner_nodelet local_planner ${${PROJECT_NAME}_EXPORTED_
 
 ## Declare a C++ executable
 # add_executable(avoidance_node src/avoidance_node.cpp)
-add_executable(local_planner_node src/nodes/local_planner_node_main.cpp)
+add_executable(local_planner_node src/nodes/local_planner_node_main.cpp)# src/nodes/avoid_offb_node.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above

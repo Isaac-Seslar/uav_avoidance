@@ -3,13 +3,59 @@
 #include <mavros_msgs/CommandBool.h>
 #include <mavros_msgs/SetMode.h>
 #include <mavros_msgs/State.h>
+#include <fstream>
+#include <iostream>
+#include <sstream>
+#include <string>
+
+using namespace std;
 
 mavros_msgs::State current_state;
+
 void state_cb(const mavros_msgs::State::ConstPtr& msg){
     current_state = *msg;
 }
 
 
+// /* Get the text file writen by the MATLAB code
+// Ensure the .txt path is correct */
+
+// float quad_state()
+// {
+
+//     ifstream quadfile;
+//     quadfile.open('Quadrotor.txt')
+//     if (!quadfile.is_open()){
+//         cout<<"File failed to open"<<endl;
+//         return 0;
+//     }
+
+//     float time, x, y, z, phi, theta, psi;
+
+//     string myString;
+//     string line;
+
+//     while(getline(quadfile, line)){
+
+//         stringstream ss(line);
+//         getline(ss, myString, ',');
+//         time = stoi(myString);
+//         getline(ss, myString, ',');
+//         x = stoi(myString);
+//         getline(ss, myString, ',');
+//         y = stoi(myString);
+//         getline(ss, myString, ',');
+//         z = stoi(myString);
+//         getline(ss, myString, ',');
+//         phi = stoi(myString);
+//         getline(ss, myString, ',');
+//         theta = stoi(myString);
+//         getline(ss, myString, ',');
+//         psi = stoi(myString);
+
+//     }
+
+// }
 
 int main(int argc, char **argv)
 {   
@@ -18,13 +64,13 @@ int main(int argc, char **argv)
     ros::NodeHandle nh;
 
     ros::Subscriber state_sub = nh.subscribe<mavros_msgs::State>
-            ("uav0/mavros/state", 10, state_cb);
+            ("mavros/state", 10, state_cb);
     ros::Publisher local_pos_pub = nh.advertise<geometry_msgs::PoseStamped>
-            ("uav0/mavros/setpoint_position/local", 10);
+            ("mavros/setpoint_position/local", 10);
     ros::ServiceClient arming_client = nh.serviceClient<mavros_msgs::CommandBool>
-            ("uav0/mavros/cmd/arming");
+            ("mavros/cmd/arming");
     ros::ServiceClient set_mode_client = nh.serviceClient<mavros_msgs::SetMode>
-            ("uav0/mavros/set_mode");
+            ("mavros/set_mode");
 
     //the setpoint publishing rate MUST be faster than 2Hz
     ros::Rate rate(20.0);
@@ -34,8 +80,6 @@ int main(int argc, char **argv)
         ros::spinOnce();
         rate.sleep();
     }
-
-
 
 
     mavros_msgs::SetMode offb_set_mode;
@@ -73,55 +117,57 @@ int main(int argc, char **argv)
     }
 
     
-    // Takeoff to an altitude of 2 meters with 10 second timer
-    ROS_INFO("Takeoff initiatied...");
-    for( int i = 100; i > 0; --i ){
+    // // Takeoff to an altitude of 2 meters with 10 second timer
+    // ROS_INFO("Takeoff initiatied...");
+    // for( int i = 100; i > 0; --i ){
         
-        pose.pose.position.x = 0;
-        pose.pose.position.y = 0;
-        pose.pose.position.z = 2;
-        local_pos_pub.publish(pose);
+    //     pose.pose.position.x = 0;
+    //     pose.pose.position.y = 0;
+    //     pose.pose.position.z = 2;
+    //     local_pos_pub.publish(pose);
         
-        s = 1;
+    //     s = 1;
 
-        ros::spinOnce();
-        rate.sleep();
-    }
+    //     ros::spinOnce();
+    //     rate.sleep();
+    // }
 
-    // while(ros::ok() && current_state.connected)
+    // // while(ros::ok() && current_state.connected)
 
-    // First setpoint
-    if(s == 1){
+    // // First setpoint
+    // if(s == 1){
 
-        pose.pose.position.x = 0;
-        pose.pose.position.y = 4;
-        pose.pose.position.z = 2;
-        ROS_INFO("Going to first setpoint...");
-        s = 2;
+    //     pose.pose.position.x = 20;
+    //     pose.pose.position.y = 0;
+    //     pose.pose.position.z = 2;
 
-        for( int i = 100; i > 0; --i){
+    //     // pose.pose.velocity.x = 1
+    //     ROS_INFO("Going to first setpoint...");
+    //     s = 2;
 
-
-            local_pos_pub.publish(pose);
-            ros::spinOnce();
-            rate.sleep();
-        }
-    }
-
-    if(s == 2){
-        pose.pose.position.x = 4;
-        pose.pose.position.y = 0;
-        pose.pose.position.z = 2;
-        ROS_INFO("Going to second setpoint...");
-
-        for( int i = 100; i > 0; --i){
+    //     for( int i = 50; i > 0; --i){
 
 
-            local_pos_pub.publish(pose);
-            ros::spinOnce();
-            rate.sleep();
-        }
-    }
+    //         local_pos_pub.publish(pose);
+    //         ros::spinOnce();
+    //         rate.sleep();
+    //     }
+    // }
+
+    // if(s == 2){
+    //     pose.pose.position.x = 4;
+    //     pose.pose.position.y = 0;
+    //     pose.pose.position.z = 2;
+    //     ROS_INFO("Going to second setpoint...");
+
+    //     for( int i = 100; i > 0; --i){
+
+
+    //         local_pos_pub.publish(pose);
+    //         ros::spinOnce();
+    //         rate.sleep();
+    //     }
+    // }
 
 
 // mavros_msgs::CommandTOL land_cmd;

@@ -38,7 +38,7 @@
             <arg name="ID" value="$(arg ID)"/>
         </include>
         <!-- MAVROS -->
-        <include file="$(find uav_flight)/launch/mavros/px4.launch">
+        <include file="$(find uav_flight)/launch/px4/px4.launch">
             <arg name="fcu_url" value="$(arg fcu_url)"/>
             <arg name="gcs_url" value=""/>
             <arg name="tgt_system" value="$(eval 1 + arg('ID'))"/>
@@ -64,7 +64,7 @@
             <arg name="ID" value="$(arg ID)"/>
         </include>
         <!-- MAVROS -->
-        <include file="$(find uav_flight)/launch/mavros/px4.launch">
+        <include file="$(find uav_flight)/launch/px4/px4.launch">
             <arg name="fcu_url" value="$(arg fcu_url)"/>
             <arg name="gcs_url" value=""/>
             <arg name="tgt_system" value="$(eval 1 + arg('ID'))"/>
@@ -90,7 +90,7 @@
             <arg name="ID" value="$(arg ID)"/>
         </include>
         <!-- MAVROS -->
-        <include file="$(find uav_flight)/launch/mavros/px4.launch">
+        <include file="$(find uav_flight)/launch/px4/px4.launch">
             <arg name="fcu_url" value="$(arg fcu_url)"/>
             <arg name="gcs_url" value=""/>
             <arg name="tgt_system" value="$(eval 1 + arg('ID'))"/>

@@ -1,0 +1,7 @@
+[01m[K/home/isaac/uav_avoidance/src/uav_flight/src/offb_node.cpp:[m[K In function ‘[01m[Kint main(int, char**)[m[K’:
+[01m[K/home/isaac/uav_avoidance/src/uav_flight/src/offb_node.cpp:100:19:[m[K [01;31m[Kerror: [m[K‘[01m[Kgeometry_msgs::PoseStamped_<std::allocator<void> >::_pose_type {aka struct geometry_msgs::Pose_<std::allocator<void> >}[m[K’ has no member named ‘[01m[Kvelocity[m[K’
+         pose.pose.[01;31m[Kvelocity[m[K.x = 1
+                   [01;31m[K^~~~~~~~[m[K
+make[2]: *** [CMakeFiles/uav_flight_node.dir/src/offb_node.cpp.o] Error 1
+make[1]: *** [CMakeFiles/uav_flight_node.dir/all] Error 2
+make: *** [all] Error 2

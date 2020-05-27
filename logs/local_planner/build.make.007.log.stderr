@@ -1,0 +1,7 @@
+CMakeFiles/local_planner_node.dir/src/nodes/avoid_offb_node.cpp.o: In function `main':
+avoid_offb_node.cpp:(.text.startup+0x0): multiple definition of `main'
+CMakeFiles/local_planner_node.dir/src/nodes/local_planner_node_main.cpp.o:local_planner_node_main.cpp:(.text.startup+0x0): first defined here
+collect2: error: ld returned 1 exit status
+make[2]: *** [/home/isaac/uav_avoidance/devel/.private/local_planner/lib/local_planner/local_planner_node] Error 1
+make[1]: *** [CMakeFiles/local_planner_node.dir/all] Error 2
+make: *** [all] Error 2

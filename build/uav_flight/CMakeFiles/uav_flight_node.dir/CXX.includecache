@@ -17,6 +17,14 @@ mavros_msgs/SetMode.h
 -
 mavros_msgs/State.h
 -
+fstream
+-
+iostream
+-
+sstream
+-
+string
+-
 
 /opt/ros/melodic/include/geometry_msgs/Point.h
 string

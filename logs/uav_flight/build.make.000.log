@@ -1,4 +1,0 @@
-[35m[1mScanning dependencies of target uav_flight_node[0m
-[ 50%] [32mBuilding CXX object CMakeFiles/uav_flight_node.dir/src/offb_node.cpp.o[0m
-[100%] [32m[1mLinking CXX executable /home/isaac/uav_avoidance/devel/.private/uav_flight/lib/uav_flight/uav_flight_node[0m
-[100%] Built target uav_flight_node
