@@ -129,10 +129,6 @@ file(INSTALL DESTINATION "/home/isaac/uav_avoidance/install" TYPE FILE FILES "/h
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/isaac/uav_avoidance/build/uav_flight/catkin_generated/safe_execute_install.cmake")
-endif()
-
-if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/isaac/uav_avoidance/build/uav_flight/catkin_generated/installspace/uav_flight.pc")
 endif()
 
@@ -145,10 +141,6 @@ endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/uav_flight" TYPE FILE FILES "/home/isaac/uav_avoidance/src/uav_flight/package.xml")
-endif()
-
-if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/uav_flight" TYPE PROGRAM FILES "/home/isaac/uav_avoidance/build/uav_flight/catkin_generated/installspace/quad_pos_read")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
