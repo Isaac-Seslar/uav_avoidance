@@ -246,6 +246,32 @@ local_planner_gencfg/fast:
 .PHONY : local_planner_gencfg/fast
 
 #=============================================================================
+# Target rules for targets named gazebo_ros_gencfg
+
+# Build rule for target.
+gazebo_ros_gencfg: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 gazebo_ros_gencfg
+.PHONY : gazebo_ros_gencfg
+
+# fast build rule for target.
+gazebo_ros_gencfg/fast:
+	$(MAKE) -f CMakeFiles/gazebo_ros_gencfg.dir/build.make CMakeFiles/gazebo_ros_gencfg.dir/build
+.PHONY : gazebo_ros_gencfg/fast
+
+#=============================================================================
+# Target rules for targets named gazebo_msgs_generate_messages_eus
+
+# Build rule for target.
+gazebo_msgs_generate_messages_eus: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 gazebo_msgs_generate_messages_eus
+.PHONY : gazebo_msgs_generate_messages_eus
+
+# fast build rule for target.
+gazebo_msgs_generate_messages_eus/fast:
+	$(MAKE) -f CMakeFiles/gazebo_msgs_generate_messages_eus.dir/build.make CMakeFiles/gazebo_msgs_generate_messages_eus.dir/build
+.PHONY : gazebo_msgs_generate_messages_eus/fast
+
+#=============================================================================
 # Target rules for targets named visualization_msgs_generate_messages_py
 
 # Build rule for target.
@@ -519,6 +545,19 @@ run_tests_local_planner_gtest_local_planner-test/fast:
 .PHONY : run_tests_local_planner_gtest_local_planner-test/fast
 
 #=============================================================================
+# Target rules for targets named gazebo_msgs_generate_messages_lisp
+
+# Build rule for target.
+gazebo_msgs_generate_messages_lisp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 gazebo_msgs_generate_messages_lisp
+.PHONY : gazebo_msgs_generate_messages_lisp
+
+# fast build rule for target.
+gazebo_msgs_generate_messages_lisp/fast:
+	$(MAKE) -f CMakeFiles/gazebo_msgs_generate_messages_lisp.dir/build.make CMakeFiles/gazebo_msgs_generate_messages_lisp.dir/build
+.PHONY : gazebo_msgs_generate_messages_lisp/fast
+
+#=============================================================================
 # Target rules for targets named diagnostic_msgs_generate_messages_py
 
 # Build rule for target.
@@ -673,6 +712,19 @@ dynamic_reconfigure_generate_messages_py: cmake_check_build_system
 dynamic_reconfigure_generate_messages_py/fast:
 	$(MAKE) -f CMakeFiles/dynamic_reconfigure_generate_messages_py.dir/build.make CMakeFiles/dynamic_reconfigure_generate_messages_py.dir/build
 .PHONY : dynamic_reconfigure_generate_messages_py/fast
+
+#=============================================================================
+# Target rules for targets named gazebo_msgs_generate_messages_cpp
+
+# Build rule for target.
+gazebo_msgs_generate_messages_cpp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 gazebo_msgs_generate_messages_cpp
+.PHONY : gazebo_msgs_generate_messages_cpp
+
+# fast build rule for target.
+gazebo_msgs_generate_messages_cpp/fast:
+	$(MAKE) -f CMakeFiles/gazebo_msgs_generate_messages_cpp.dir/build.make CMakeFiles/gazebo_msgs_generate_messages_cpp.dir/build
+.PHONY : gazebo_msgs_generate_messages_cpp/fast
 
 #=============================================================================
 # Target rules for targets named dynamic_reconfigure_generate_messages_lisp
@@ -842,6 +894,19 @@ run_tests: cmake_check_build_system
 run_tests/fast:
 	$(MAKE) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/build
 .PHONY : run_tests/fast
+
+#=============================================================================
+# Target rules for targets named gazebo_msgs_generate_messages_py
+
+# Build rule for target.
+gazebo_msgs_generate_messages_py: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 gazebo_msgs_generate_messages_py
+.PHONY : gazebo_msgs_generate_messages_py
+
+# fast build rule for target.
+gazebo_msgs_generate_messages_py/fast:
+	$(MAKE) -f CMakeFiles/gazebo_msgs_generate_messages_py.dir/build.make CMakeFiles/gazebo_msgs_generate_messages_py.dir/build
+.PHONY : gazebo_msgs_generate_messages_py/fast
 
 #=============================================================================
 # Target rules for targets named uuid_msgs_generate_messages_py
@@ -1128,6 +1193,19 @@ bond_generate_messages_cpp: cmake_check_build_system
 bond_generate_messages_cpp/fast:
 	$(MAKE) -f CMakeFiles/bond_generate_messages_cpp.dir/build.make CMakeFiles/bond_generate_messages_cpp.dir/build
 .PHONY : bond_generate_messages_cpp/fast
+
+#=============================================================================
+# Target rules for targets named gazebo_msgs_generate_messages_nodejs
+
+# Build rule for target.
+gazebo_msgs_generate_messages_nodejs: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 gazebo_msgs_generate_messages_nodejs
+.PHONY : gazebo_msgs_generate_messages_nodejs
+
+# fast build rule for target.
+gazebo_msgs_generate_messages_nodejs/fast:
+	$(MAKE) -f CMakeFiles/gazebo_msgs_generate_messages_nodejs.dir/build.make CMakeFiles/gazebo_msgs_generate_messages_nodejs.dir/build
+.PHONY : gazebo_msgs_generate_messages_nodejs/fast
 
 #=============================================================================
 # Target rules for targets named rosgraph_msgs_generate_messages_eus
@@ -2425,6 +2503,8 @@ help:
 	@echo "... local_planner-test"
 	@echo "... local_planner"
 	@echo "... local_planner_gencfg"
+	@echo "... gazebo_ros_gencfg"
+	@echo "... gazebo_msgs_generate_messages_eus"
 	@echo "... visualization_msgs_generate_messages_py"
 	@echo "... clean_test_results_local_planner"
 	@echo "... _run_tests_local_planner_gtest_local_planner-test"
@@ -2447,6 +2527,7 @@ help:
 	@echo "... geographic_msgs_generate_messages_eus"
 	@echo "... geographic_msgs_generate_messages_cpp"
 	@echo "... run_tests_local_planner_gtest_local_planner-test"
+	@echo "... gazebo_msgs_generate_messages_lisp"
 	@echo "... diagnostic_msgs_generate_messages_py"
 	@echo "... diagnostic_msgs_generate_messages_nodejs"
 	@echo "... install"
@@ -2460,6 +2541,7 @@ help:
 	@echo "... geometry_msgs_generate_messages_py"
 	@echo "... local_planner-test-roscore"
 	@echo "... dynamic_reconfigure_generate_messages_py"
+	@echo "... gazebo_msgs_generate_messages_cpp"
 	@echo "... dynamic_reconfigure_generate_messages_lisp"
 	@echo "... pcl_msgs_generate_messages_cpp"
 	@echo "... rosgraph_msgs_generate_messages_cpp"
@@ -2473,6 +2555,7 @@ help:
 	@echo "... std_msgs_generate_messages_cpp"
 	@echo "... _run_tests_local_planner"
 	@echo "... run_tests"
+	@echo "... gazebo_msgs_generate_messages_py"
 	@echo "... uuid_msgs_generate_messages_py"
 	@echo "... download_extra_data"
 	@echo "... geographic_msgs_generate_messages_py"
@@ -2496,6 +2579,7 @@ help:
 	@echo "... dynamic_reconfigure_generate_messages_nodejs"
 	@echo "... trajectory_msgs_generate_messages_lisp"
 	@echo "... bond_generate_messages_cpp"
+	@echo "... gazebo_msgs_generate_messages_nodejs"
 	@echo "... rosgraph_msgs_generate_messages_eus"
 	@echo "... run_tests_local_planner_gtest"
 	@echo "... rosgraph_msgs_generate_messages_lisp"

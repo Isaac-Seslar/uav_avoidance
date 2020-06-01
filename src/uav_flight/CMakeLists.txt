@@ -166,7 +166,7 @@ target_link_libraries(${PROJECT_NAME}_node
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
 # catkin_install_python(PROGRAMS
-#   scripts/my_python_script
+#   bin/quad_pos_read
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
 
