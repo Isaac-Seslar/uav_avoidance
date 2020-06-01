@@ -18,6 +18,15 @@ import tf
 ###########################################################
 # Read the .txt file and define each column to a variable #
 ###########################################################
+quad_val = []
+time     = []
+x        = []
+y        = []
+z        = []
+phi      = []
+theta    = []
+psi      = []
+
 quad_val = pd.read_csv('~/uav_avoidance/src/uav_flight/src/Quadrotor.txt', sep=',')
 time     = quad_val.time
 x        = quad_val.x
@@ -27,8 +36,12 @@ phi      = quad_val.phi
 theta    = quad_val.theta
 psi      = quad_val.psi
 
+# for p in len
+x_write = x.to_csv('~/Desktop/quadx.txt')
 
-###############
+# # print(len(time))
+# print(len(x))
+# ###############
 # Definitions #
 ###############
 
@@ -49,7 +62,8 @@ def myLoop():
             setGuidedMode()
         elif (choice == '3'):
             setTakeoffMode()
-        else:
+        elif (choice == '4'):
+            # waypoint(time, x, y, z)
             break
 
 # Arms the Quadrotor #
@@ -102,11 +116,16 @@ def waypoint(time, x, y, z):
     msg = PoseStamped()
     msg.header.stamp = rospy.Time.now()
 
-    msg.pose.position.x = x
-    msg.pose.position.y = y
-    msg.pose.position.z = z
+    while not rospy.is_shutdown():
 
-    setpoint_pub.publish
+        for i in [0, len(time)]:
+            print(x[i])
+            msg.pose.position.x = x[i]
+            msg.pose.position.y = y[i]
+            msg.pose.position.z = z[i]
+
+            setpoint_pub.publish
+            rospy.sleep(1)
 
 
 #####################
@@ -123,14 +142,18 @@ velocity_pub = rospy.Publisher('mavros/setpoint_velocity/cmd_vel', TwistStamped,
 while not rospy.is_shutdown():
 
     myLoop()
+    print("here1")
 
-    for i in [0, len(time)]:
+    # while not rospy.is_shutdown():
 
-        waypoint(time, x, y, z)
+    for i in range(len(time)):
+        
+        msg = PoseStamped()
+        msg.header.stamp = rospy.Time.now()
+        print(x[i])
+        msg.pose.position.x = x[i]
+        msg.pose.position.y = y[i]
+        msg.pose.position.z = z[i]
 
-        if i == 1:
-            print("Traveling to waypoints...")
-        else:
-            pass
-
-
+        setpoint_pub.publish
+        rospy.sleep(.25)

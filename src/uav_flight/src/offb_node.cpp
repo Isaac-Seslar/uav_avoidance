@@ -14,48 +14,9 @@ mavros_msgs::State current_state;
 
 void state_cb(const mavros_msgs::State::ConstPtr& msg){
     current_state = *msg;
+    ROS_INFO("HEREW")
 }
 
-
-// /* Get the text file writen by the MATLAB code
-// Ensure the .txt path is correct */
-
-// float quad_state()
-// {
-
-//     ifstream quadfile;
-//     quadfile.open('Quadrotor.txt')
-//     if (!quadfile.is_open()){
-//         cout<<"File failed to open"<<endl;
-//         return 0;
-//     }
-
-//     float time, x, y, z, phi, theta, psi;
-
-//     string myString;
-//     string line;
-
-//     while(getline(quadfile, line)){
-
-//         stringstream ss(line);
-//         getline(ss, myString, ',');
-//         time = stoi(myString);
-//         getline(ss, myString, ',');
-//         x = stoi(myString);
-//         getline(ss, myString, ',');
-//         y = stoi(myString);
-//         getline(ss, myString, ',');
-//         z = stoi(myString);
-//         getline(ss, myString, ',');
-//         phi = stoi(myString);
-//         getline(ss, myString, ',');
-//         theta = stoi(myString);
-//         getline(ss, myString, ',');
-//         psi = stoi(myString);
-
-//     }
-
-// }
 
 int main(int argc, char **argv)
 {   
@@ -69,6 +30,8 @@ int main(int argc, char **argv)
             ("mavros/setpoint_position/local", 10);
     ros::ServiceClient arming_client = nh.serviceClient<mavros_msgs::CommandBool>
             ("mavros/cmd/arming");
+
+
     ros::ServiceClient set_mode_client = nh.serviceClient<mavros_msgs::SetMode>
             ("mavros/set_mode");
 
@@ -77,6 +40,7 @@ int main(int argc, char **argv)
 
     // wait for FCU connection
     while(ros::ok() && !current_state.connected){
+    	ROS_INFO("Hyes")
         ros::spinOnce();
         rate.sleep();
     }
@@ -93,10 +57,10 @@ int main(int argc, char **argv)
     ros::Time last_request = ros::Time::now();
 
     while(ros::ok() && !current_state.armed){
-        if( current_state.mode != "OFFBOARD" &&
-            (ros::Time::now() - last_request > ros::Duration(5.0))){
-            if( set_mode_client.call(offb_set_mode) &&
-                offb_set_mode.response.mode_sent){
+        if( current_state.mode != "OFFBOARD" && (ros::Time::now() - last_request > ros::Duration(5.0))){
+
+            if( set_mode_client.call(offb_set_mode) && offb_set_mode.response.mode_sent){
+                
                 ROS_INFO("Offboard enabled");
             }
             last_request = ros::Time::now();
@@ -105,6 +69,7 @@ int main(int argc, char **argv)
                 (ros::Time::now() - last_request > ros::Duration(5.0))){
                 if( arming_client.call(arm_cmd) &&
                     arm_cmd.response.success){
+
                     ROS_INFO("Vehicle armed");
                 }
                 last_request = ros::Time::now();
@@ -115,27 +80,26 @@ int main(int argc, char **argv)
         ros::spinOnce();
         rate.sleep();
     }
-
+    // std::vector<int> x{ ;
     
-    // // Takeoff to an altitude of 2 meters with 10 second timer
-    // ROS_INFO("Takeoff initiatied...");
-    // for( int i = 100; i > 0; --i ){
+    // Takeoff to an altitude of 2 meters with 10 second timer
+    ROS_INFO("Takeoff initiatied...");
+    for( int i = 100; i > 0; --i ){
         
-    //     pose.pose.position.x = 0;
-    //     pose.pose.position.y = 0;
-    //     pose.pose.position.z = 2;
-    //     local_pos_pub.publish(pose);
+        pose.pose.position.x = 0;
+        pose.pose.position.y = 0;
+        pose.pose.position.z = 2;
+        local_pos_pub.publish(pose);
         
-    //     s = 1;
+        s = 1;
 
-    //     ros::spinOnce();
-    //     rate.sleep();
-    // }
+        ros::spinOnce();
+        rate.sleep();
+    }
 
-    // // while(ros::ok() && current_state.connected)
+    // while(ros::ok() && current_state.connected)
 
-    // // First setpoint
-    // if(s == 1){
+    // for(int i = )
 
     //     pose.pose.position.x = 20;
     //     pose.pose.position.y = 0;
