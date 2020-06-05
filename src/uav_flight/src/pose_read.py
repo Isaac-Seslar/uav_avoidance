@@ -12,7 +12,7 @@ from mavros_msgs.srv import CommandBool, SetMode, CommandTOL
 import std_msgs
 from geometry_msgs.msg import PoseStamped, TwistStamped
 import tf 
-import sys, select, os
+import sys, select, os, tty, termios
 
 ###########################################################
 # Read the .txt file and define each column to a variable #
@@ -32,20 +32,24 @@ psi      = quad_val.psi
 
 # Define a loop and Menu #
 ##########################
+
+# Actively watches for keypress #
+#################################
+def getch():
+
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setraw(sys.stdin.fileno())
+        ch = sys.stdin.read(1)
+ 
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+    return ch
+
 def menu():
-	print "Please choose from the following: \n 1: Arm, Takeoff, and Loiter"
-
-
-def myLoop():
-	choice = '1'
-	while not rospy.is_shutdown() and choice in ['1']:
-		menu()
-		choice = raw_input("Enter your input: ");
-		if (choice == '1'):
-			arm_takeoff()
-
-		# if (choice =='2'):
-
+	print "1: Arm, Takeoff, and Loiter at altitude of 3m \
+	 \n2: Land \n3: Kill node"
 
 def arm_takeoff():
 
@@ -70,24 +74,26 @@ def arm_takeoff():
 		offb_set_mode = flight_mode(custom_mode="OFFBOARD")
 		arm_client = arming_serv(True)
 		print "Take off and hover initiated"
-		# rospy.sleep(1)
+		char = 0
 
 		
 		while True:
 
 			os.system('cls' if os.name == 'nt' else 'clear')
-			# print "Loitering. \nPlease choose from the following: \nEnter: Fly mission\n 2: Land Quadrotor"
-			print "Press Enter to start the mission"
+			print "1: Start Mission\n2: Abort"
 
 			setpoint_pub.publish(pose_stamp)
 			rospy.sleep(.25)
+			char = getch()
 
-			if sys.stdin in select.select([sys.stdin], [], [], 0)[0]:
-				line = raw_input()
+			if char == "1":
 				mission()
+				char = 0
+				break
 
-			# if n == 2:
-			# 	offb_set_mode = flight_mode(custom_mode="AUTO.LAND")
+			if char == "2":
+				offb_set_mode = flight_mode(custom_mode="AUTO.LAND")
+				break
 
 
 	except rospy.ServiceException as e:
@@ -114,9 +120,31 @@ def mission():
 		setpoint_pub.publish(pose_stamp)
 		rate.sleep()
 
-		if i == len(time):
+		if i == len(time) - 1:
 			print("Returning to origin...")
 
+			for org_ret in range(50):
+
+				pose_stamp.pose.position.x = 0
+				pose_stamp.pose.position.y = 0
+				pose_stamp.pose.position.z = 3
+
+				setpoint_pub.publish(pose_stamp)
+
+				rate.sleep()
+
+			break
+
+def kill():
+	print "\n*Cough cough*"
+	rospy.sleep(.6)
+	print "\nI'm.."
+	rospy.sleep(.5)
+	print "\ndying"
+	rospy.sleep(.5)
+	rospy.signal_shutdown("Time to sleep!")
+	os.system('cls' if os.name == 'nt' else 'clear')
+	
 
 
 # rospy.wait_for_service('mavros/cmd/arming')
@@ -143,4 +171,18 @@ if __name__ == '__main__':
 
 	while not rospy.is_shutdown():
 
-		myLoop()
+		choice = '1'
+		while not rospy.is_shutdown() and choice in ['1', '2', '3']:
+			os.system('cls' if os.name == 'nt' else 'clear')
+			menu()
+			choice = raw_input("Enter your input: ");
+
+			if choice == '1':
+				arm_takeoff()
+
+			if choice == '2':
+				offb_set_mode = flight_mode(custom_mode="AUTO.LAND")
+
+			if choice == '3':
+				kill()
+				break
