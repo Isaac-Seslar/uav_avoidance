@@ -49,7 +49,8 @@ def getch():
 
 def menu():
 	print "1: Arm, Takeoff, and Loiter at altitude of 3m \
-	 \n2: Land \n3: Kill node"
+	 \n2: Return to home \n3: Land \
+	 \n4: Kill node"
 
 def arm_takeoff():
 
@@ -121,19 +122,42 @@ def mission():
 		rate.sleep()
 
 		if i == len(time) - 1:
-			print("Returning to origin...")
-
-			for org_ret in range(50):
-
-				pose_stamp.pose.position.x = 0
-				pose_stamp.pose.position.y = 0
-				pose_stamp.pose.position.z = 3
-
-				setpoint_pub.publish(pose_stamp)
-
-				rate.sleep()
-
+			offb_set_mode = flight_mode(custom_mode="AUTO.LAND")
 			break
+
+
+def return_mission():
+	pose_stamp=PoseStamped()
+
+	# pose_stamp.pose.position.x = x[-1]
+	# pose_stamp.pose.position.y = y[-1]
+	# pose_stamp.pose.position.z = z[-1]
+
+
+	for i in range(20):
+		setpoint_pub.publish(pose_stamp)
+		rate.sleep()
+
+	offb_set_mode = flight_mode(custom_mode="OFFBOARD")
+	arm_client = arming_serv(True)
+
+	setpoint_pub.publish(pose_stamp)
+
+	for r in reversed(range(len(time-1))):
+		pose_stamp.pose.position.x = x[r]
+		pose_stamp.pose.position.y = y[r]
+		pose_stamp.pose.position.z = z[r]
+
+		quaternion = tf.transformations.quaternion_from_euler(phi[r], theta[r], psi[r])
+
+		pose_stamp.pose.orientation.x = quaternion[0]
+		pose_stamp.pose.orientation.y = quaternion[1]	
+		pose_stamp.pose.orientation.z = quaternion[2]
+		pose_stamp.pose.orientation.w = quaternion[3]
+
+		setpoint_pub.publish(pose_stamp)
+		rate.sleep()
+
 
 def kill():
 	print "\n*Cough cough*"
@@ -172,7 +196,7 @@ if __name__ == '__main__':
 	while not rospy.is_shutdown():
 
 		choice = '1'
-		while not rospy.is_shutdown() and choice in ['1', '2', '3']:
+		while not rospy.is_shutdown() and choice in ['1', '2', '3', '4']:
 			os.system('cls' if os.name == 'nt' else 'clear')
 			menu()
 			choice = raw_input("Enter your input: ");
@@ -181,8 +205,12 @@ if __name__ == '__main__':
 				arm_takeoff()
 
 			if choice == '2':
-				offb_set_mode = flight_mode(custom_mode="AUTO.LAND")
+				return_mission()
 
 			if choice == '3':
+				offb_set_mode = flight_mode(custom_mode="AUTO.LAND")
+
+
+			if choice == '4':
 				kill()
 				break
