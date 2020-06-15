@@ -14,7 +14,7 @@ mavros_msgs::State current_state;
 
 void state_cb(const mavros_msgs::State::ConstPtr& msg){
     current_state = *msg;
-    ROS_INFO("HEREW")
+    ROS_INFO("HEREW");
 }
 
 
@@ -40,7 +40,7 @@ int main(int argc, char **argv)
 
     // wait for FCU connection
     while(ros::ok() && !current_state.connected){
-    	ROS_INFO("Hyes")
+    	ROS_INFO("Hyes");
         ros::spinOnce();
         rate.sleep();
     }
