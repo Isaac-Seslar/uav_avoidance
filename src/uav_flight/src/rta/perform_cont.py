@@ -1,6 +1,6 @@
 import numpy as np
 import math
-from Common_Functions import *
+from com_func import *
 
 def Performance_Controller(vehicle_x, vehicle_y, target):
     # Compute a line from vehicle to target
@@ -21,3 +21,6 @@ def Performance_Controller(vehicle_x, vehicle_y, target):
     y_next = vehicle_y + slope*x_dif
 
     return np.array([x_next, y_next])
+
+if __name__ == '__main__':
+    Performance_Controller()

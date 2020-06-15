@@ -1,7 +1,8 @@
 import numpy as np
 import math
-from Common_Functions import *
+from com_func import *
 from scipy.io import loadmat
+# from scipy import loadmat
 
 def Safe_Controller (vehicle_x, vehicle_y,  target, cur_wpt):
     #Check current distance from cur_wpt, and distance to next waypoint, assign based on whether reached cur_wpt or not
@@ -137,3 +138,8 @@ def Safe_Controller_Init (vehicle_x, vehicle_y, vehicle_xdot, vehicle_ydot, targ
 
     #Add final waypoint away from circle:
     wpt_safe_list = np.append(wpts_safe, [xFinal, yFinal])
+
+
+if __name__ == '__main__':
+    Safe_Controller()
+    Safe_Controller_Init()

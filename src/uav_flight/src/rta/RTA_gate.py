@@ -1,6 +1,6 @@
-from Common_Functions import *
-from Safe_Controller import *
-from Performance_Controller import *
+from com_func import *
+from safe_cont import *
+from perform_cont import *
 
 def RTA_Gate(vehicle_x, vehicle_y, vehicle_xdot, vehicle_ydot, obstacle_list, target, current_mode, safe_complete, cur_wpt):
         #Parameters:
@@ -70,8 +70,5 @@ def RTA_Gate(vehicle_x, vehicle_y, vehicle_xdot, vehicle_ydot, obstacle_list, ta
 
                 return wpt_performance, current_mode, safe_complete
 
-
-
-
-
-
+if __name__ == '__main__':
+    RTA_Gate()
