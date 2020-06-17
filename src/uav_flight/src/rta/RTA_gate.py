@@ -102,7 +102,7 @@ def mission():
 
     vehicle_xdot  = 0.2
     vehicle_ydot  = 0.2
-    obstacle_list =  np.array([[1, 2], [3, 4], [5, 6]])
+    obstacle_list =  np.array([[1, 5], [5, 2], [8, 9]])
     target        = np.array([x,y])
     current_mode  = 0
     safe_complete = 0

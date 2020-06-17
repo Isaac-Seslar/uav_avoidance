@@ -11,7 +11,7 @@ import std_msgs.msg
 class SLPGridMsg(genpy.Message):
   _md5sum = "ac7dcafe4e3af4e98f04adc7a210b7be"
   _type = "safe_landing_planner/SLPGridMsg"
-  _has_header = True #flag to mark the presence of a Header object
+  _has_header = True  # flag to mark the presence of a Header object
   _full_text = """Header header
 std_msgs/Float64MultiArray mean
 std_msgs/Float64MultiArray std_dev
@@ -122,7 +122,7 @@ float64 z"""
     """
     if args or kwds:
       super(SLPGridMsg, self).__init__(*args, **kwds)
-      #message fields cannot be None, assign default values for those that are
+      # message fields cannot be None, assign default values for those that are
       if self.header is None:
         self.header = std_msgs.msg.Header()
       if self.mean is None:
@@ -180,7 +180,8 @@ float64 z"""
         buff.write(struct.pack('<I%ss'%length, length, _x))
         _x = val1
         buff.write(_get_struct_2I().pack(_x.size, _x.stride))
-      buff.write(_get_struct_I().pack(self.mean.layout.data_offset))
+      _x = self.mean.layout.data_offset
+      buff.write(_get_struct_I().pack(_x))
       length = len(self.mean.data)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
@@ -196,7 +197,8 @@ float64 z"""
         buff.write(struct.pack('<I%ss'%length, length, _x))
         _x = val1
         buff.write(_get_struct_2I().pack(_x.size, _x.stride))
-      buff.write(_get_struct_I().pack(self.std_dev.layout.data_offset))
+      _x = self.std_dev.layout.data_offset
+      buff.write(_get_struct_I().pack(_x))
       length = len(self.std_dev.data)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
@@ -212,7 +214,8 @@ float64 z"""
         buff.write(struct.pack('<I%ss'%length, length, _x))
         _x = val1
         buff.write(_get_struct_2I().pack(_x.size, _x.stride))
-      buff.write(_get_struct_I().pack(self.counter.layout.data_offset))
+      _x = self.counter.layout.data_offset
+      buff.write(_get_struct_I().pack(_x))
       length = len(self.counter.data)
       buff.write(_struct_I.pack(length))
       pattern = '<%sq'%length
@@ -228,7 +231,8 @@ float64 z"""
         buff.write(struct.pack('<I%ss'%length, length, _x))
         _x = val1
         buff.write(_get_struct_2I().pack(_x.size, _x.stride))
-      buff.write(_get_struct_I().pack(self.land.layout.data_offset))
+      _x = self.land.layout.data_offset
+      buff.write(_get_struct_I().pack(_x))
       length = len(self.land.data)
       buff.write(_struct_I.pack(length))
       pattern = '<%sq'%length
@@ -396,7 +400,7 @@ float64 z"""
       (_x.grid_size, _x.cell_size, _x.curr_pos_index.x, _x.curr_pos_index.y, _x.curr_pos_index.z,) = _get_struct_5d().unpack(str[start:end])
       return self
     except struct.error as e:
-      raise genpy.DeserializationError(e) #most likely buffer underfill
+      raise genpy.DeserializationError(e)  # most likely buffer underfill
 
 
   def serialize_numpy(self, buff, numpy):
@@ -425,7 +429,8 @@ float64 z"""
         buff.write(struct.pack('<I%ss'%length, length, _x))
         _x = val1
         buff.write(_get_struct_2I().pack(_x.size, _x.stride))
-      buff.write(_get_struct_I().pack(self.mean.layout.data_offset))
+      _x = self.mean.layout.data_offset
+      buff.write(_get_struct_I().pack(_x))
       length = len(self.mean.data)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
@@ -441,7 +446,8 @@ float64 z"""
         buff.write(struct.pack('<I%ss'%length, length, _x))
         _x = val1
         buff.write(_get_struct_2I().pack(_x.size, _x.stride))
-      buff.write(_get_struct_I().pack(self.std_dev.layout.data_offset))
+      _x = self.std_dev.layout.data_offset
+      buff.write(_get_struct_I().pack(_x))
       length = len(self.std_dev.data)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
@@ -457,7 +463,8 @@ float64 z"""
         buff.write(struct.pack('<I%ss'%length, length, _x))
         _x = val1
         buff.write(_get_struct_2I().pack(_x.size, _x.stride))
-      buff.write(_get_struct_I().pack(self.counter.layout.data_offset))
+      _x = self.counter.layout.data_offset
+      buff.write(_get_struct_I().pack(_x))
       length = len(self.counter.data)
       buff.write(_struct_I.pack(length))
       pattern = '<%sq'%length
@@ -473,7 +480,8 @@ float64 z"""
         buff.write(struct.pack('<I%ss'%length, length, _x))
         _x = val1
         buff.write(_get_struct_2I().pack(_x.size, _x.stride))
-      buff.write(_get_struct_I().pack(self.land.layout.data_offset))
+      _x = self.land.layout.data_offset
+      buff.write(_get_struct_I().pack(_x))
       length = len(self.land.data)
       buff.write(_struct_I.pack(length))
       pattern = '<%sq'%length
@@ -642,27 +650,27 @@ float64 z"""
       (_x.grid_size, _x.cell_size, _x.curr_pos_index.x, _x.curr_pos_index.y, _x.curr_pos_index.z,) = _get_struct_5d().unpack(str[start:end])
       return self
     except struct.error as e:
-      raise genpy.DeserializationError(e) #most likely buffer underfill
+      raise genpy.DeserializationError(e)  # most likely buffer underfill
 
 _struct_I = genpy.struct_I
 def _get_struct_I():
     global _struct_I
     return _struct_I
-_struct_5d = None
-def _get_struct_5d():
-    global _struct_5d
-    if _struct_5d is None:
-        _struct_5d = struct.Struct("<5d")
-    return _struct_5d
-_struct_3I = None
-def _get_struct_3I():
-    global _struct_3I
-    if _struct_3I is None:
-        _struct_3I = struct.Struct("<3I")
-    return _struct_3I
 _struct_2I = None
 def _get_struct_2I():
     global _struct_2I
     if _struct_2I is None:
         _struct_2I = struct.Struct("<2I")
     return _struct_2I
+_struct_3I = None
+def _get_struct_3I():
+    global _struct_3I
+    if _struct_3I is None:
+        _struct_3I = struct.Struct("<3I")
+    return _struct_3I
+_struct_5d = None
+def _get_struct_5d():
+    global _struct_5d
+    if _struct_5d is None:
+        _struct_5d = struct.Struct("<5d")
+    return _struct_5d

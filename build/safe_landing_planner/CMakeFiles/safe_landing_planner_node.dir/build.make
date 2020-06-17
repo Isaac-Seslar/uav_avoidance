@@ -106,6 +106,7 @@ safe_landing_planner_node_EXTERNAL_OBJECTS =
 /home/isaac/uav_avoidance/devel/.private/safe_landing_planner/lib/safe_landing_planner/safe_landing_planner_node: /opt/ros/melodic/lib/libdynamic_reconfigure_config_init_mutex.so
 /home/isaac/uav_avoidance/devel/.private/safe_landing_planner/lib/safe_landing_planner/safe_landing_planner_node: /opt/ros/melodic/lib/libnodeletlib.so
 /home/isaac/uav_avoidance/devel/.private/safe_landing_planner/lib/safe_landing_planner/safe_landing_planner_node: /opt/ros/melodic/lib/libbondcpp.so
+/home/isaac/uav_avoidance/devel/.private/safe_landing_planner/lib/safe_landing_planner/safe_landing_planner_node: /usr/lib/x86_64-linux-gnu/libuuid.so
 /home/isaac/uav_avoidance/devel/.private/safe_landing_planner/lib/safe_landing_planner/safe_landing_planner_node: /usr/lib/x86_64-linux-gnu/libpcl_common.so
 /home/isaac/uav_avoidance/devel/.private/safe_landing_planner/lib/safe_landing_planner/safe_landing_planner_node: /usr/lib/x86_64-linux-gnu/libpcl_octree.so
 /home/isaac/uav_avoidance/devel/.private/safe_landing_planner/lib/safe_landing_planner/safe_landing_planner_node: /usr/lib/x86_64-linux-gnu/libpcl_io.so
