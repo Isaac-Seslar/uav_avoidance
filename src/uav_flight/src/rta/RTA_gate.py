@@ -127,17 +127,17 @@ def mission():
 
     cur_wpt = np.array([x_lin[0], y_lin[0]])
 
-    for i in range(gcoor):
+    for i in range(gcoor): # Change to while loop
         print(x_lin[i])
         print(y_lin[i])
         print(z_lin[i])
 
         wpt = RTA_Gate(x_lin[i], y_lin[i], vehicle_xdot, vehicle_ydot, obstacle_list, target, current_mode, safe_complete, cur_wpt)
         
-        wpt_out = wpt[0]
+        wpt_out = wpt[0] # Change to cur_wpt
         print(wpt_out[0])
-        x_rta = wpt_out[0]
-        y_rta = wpt_out[1]
+        x_rta = wpt_out[0] # Change to cur_wpt
+        y_rta = wpt_out[1] # Change to cur_wpt
 
         pose_stamp.pose.position.x = x_rta
         pose_stamp.pose.position.y = y_rta
@@ -248,11 +248,12 @@ if __name__ == '__main__':
     rospy.init_node('RTA_Gate', anonymous=False)
 
     # Subscribers
-    state_sub      = rospy.Subscriber("mavros/state", State)
+    state_sub      = rospy.Subscriber('mavros/state', State)
 
     # Publishers
-    setpoint_pub   = rospy.Publisher("mavros/setpoint_position/local", PoseStamped, queue_size=10)
+    setpoint_pub   = rospy.Publisher('mavros/setpoint_position/local', PoseStamped, queue_size=10)
     velocity_pub   = rospy.Publisher('mavros/setpoint_velocity/cmd_vel', TwistStamped, queue_size=10)
+    local_position = rospy.Publisher('mavros/local_position/pose', PoseStamped)
 
     # Services
     arming_serv    = rospy.ServiceProxy('mavros/cmd/arming', CommandBool)
