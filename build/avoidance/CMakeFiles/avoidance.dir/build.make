@@ -209,6 +209,7 @@ avoidance_EXTERNAL_OBJECTS =
 /home/isaac/uav_avoidance/devel/.private/avoidance/lib/libavoidance.so: /opt/ros/melodic/lib/libdynamic_reconfigure_config_init_mutex.so
 /home/isaac/uav_avoidance/devel/.private/avoidance/lib/libavoidance.so: /opt/ros/melodic/lib/libnodeletlib.so
 /home/isaac/uav_avoidance/devel/.private/avoidance/lib/libavoidance.so: /opt/ros/melodic/lib/libbondcpp.so
+/home/isaac/uav_avoidance/devel/.private/avoidance/lib/libavoidance.so: /usr/lib/x86_64-linux-gnu/libuuid.so
 /home/isaac/uav_avoidance/devel/.private/avoidance/lib/libavoidance.so: /usr/lib/x86_64-linux-gnu/libpcl_common.so
 /home/isaac/uav_avoidance/devel/.private/avoidance/lib/libavoidance.so: /usr/lib/x86_64-linux-gnu/libpcl_octree.so
 /home/isaac/uav_avoidance/devel/.private/avoidance/lib/libavoidance.so: /usr/lib/x86_64-linux-gnu/libpcl_io.so

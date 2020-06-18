@@ -135,6 +135,7 @@ global_planner__test_EXTERNAL_OBJECTS =
 /home/isaac/uav_avoidance/devel/.private/global_planner/lib/global_planner/global_planner-test: /opt/ros/melodic/lib/libdynamic_reconfigure_config_init_mutex.so
 /home/isaac/uav_avoidance/devel/.private/global_planner/lib/global_planner/global_planner-test: /opt/ros/melodic/lib/libnodeletlib.so
 /home/isaac/uav_avoidance/devel/.private/global_planner/lib/global_planner/global_planner-test: /opt/ros/melodic/lib/libbondcpp.so
+/home/isaac/uav_avoidance/devel/.private/global_planner/lib/global_planner/global_planner-test: /usr/lib/x86_64-linux-gnu/libuuid.so
 /home/isaac/uav_avoidance/devel/.private/global_planner/lib/global_planner/global_planner-test: /usr/lib/x86_64-linux-gnu/libpcl_common.so
 /home/isaac/uav_avoidance/devel/.private/global_planner/lib/global_planner/global_planner-test: /usr/lib/x86_64-linux-gnu/libpcl_octree.so
 /home/isaac/uav_avoidance/devel/.private/global_planner/lib/global_planner/global_planner-test: /usr/lib/x86_64-linux-gnu/libpcl_io.so
