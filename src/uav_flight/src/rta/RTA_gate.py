@@ -11,10 +11,11 @@ import std_msgs
 import tf 
 import sys, select, os, tty, termios
 
-from geometry_msgs.msg import PoseStamped, TwistStamped
+from geometry_msgs.msg import PoseStamped, TwistStamped, PoseWithCovarianceStamped
 from numpy import linspace, array
-from mavros_msgs.msg import GlobalPositionTarget, State
+from mavros_msgs.msg import PositionTarget, State
 from mavros_msgs.srv import CommandBool, SetMode, CommandTOL
+# from nav_msgs.msg import Odometry
 
 # Personal def
 from com_func import *
@@ -38,6 +39,11 @@ def getch():
     finally:
         termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
     return ch
+
+# Tolerance function #
+######################
+def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
+    return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
 
 # Defines the choices availible #
 #################################
@@ -98,56 +104,124 @@ def arm_takeoff():
 ####################################################
 def mission():
 
+    quad_pose = PoseStamped()
     pose_stamp = PoseStamped()
+    quad_orie = TwistStamped()
 
-    vehicle_xdot  = 0.2
-    vehicle_ydot  = 0.2
-    obstacle_list =  np.array([[1, 5], [5, 2], [8, 9]])
-    target        = np.array([x,y])
+   
+ 
+
+    # Vehicle (x,y) position and velocity
+    vehicle_x    = quad_pose.pose.position.x
+    vehicle_y    = quad_pose.pose.position.y
+    vehicle_xdot = quad_orie.twist.linear.x
+    vehicle_ydot = quad_orie.twist.linear.y
+
+    # Defines where the obstacles are on the grid
+    obstacle_list =  np.array([[1, 5], [5, 2], [8, 9]]) 
+
+    # Initialize values for RTA_Gate()
     current_mode  = 0
     safe_complete = 0
 
-    if abs(x) >= abs(y) and abs(x) >= abs(z):
-        gcoor = abs(x) 
-        x_lin = linspace(0, x, gcoor)
-        y_lin = linspace(0, y, gcoor)
-        z_lin = linspace(0, z, gcoor)
+    # Define final (x,y) coordinate
+    target = np.array([x,y])
+    x_targ = target[0]
+    y_targ = target[1]
 
-    if abs(y) > abs(x) and abs(y) >= abs(z):
-        gcoor = abs(y)
-        x_lin = linspace(0, x, gcoor)
-        y_lin = linspace(0, y, gcoor)
-        z_lin = linspace(0, z, gcoor)
+    # Initialize the first waypoint. This will be updated in the loop
+    cur_wpt = np.array([vehicle_x, vehicle_y])
+    x_rta   = cur_wpt[0]
+    y_rta   = cur_wpt[1]
 
-    if abs(z) > abs(x) and abs(z) > abs(y):
-        gcoor = z
-        x_lin = linspace(0, x, gcoor)
-        y_lin = linspace(0, y, gcoor)
-        z_lin = linspace(0, z, gcoor)
+    # print(isclose(x_cur, x_targ, abs_tol=0.25))
+    # print("yahoo!")
 
-    cur_wpt = np.array([x_lin[0], y_lin[0]])
+    # Set up tolerances for ending the loop
+    x_tol = isclose(x_rta, x_targ, abs_tol=0.25)
+    y_tol = isclose(y_rta, y_targ, abs_tol=0.25)
 
-    for i in range(gcoor): # Change to while loop
-        print(x_lin[i])
-        print(y_lin[i])
-        print(z_lin[i])
+    # pose_stamp = PoseStamped()
 
-        wpt = RTA_Gate(x_lin[i], y_lin[i], vehicle_xdot, vehicle_ydot, obstacle_list, target, current_mode, safe_complete, cur_wpt)
-        
-        wpt_out = wpt[0] # Change to cur_wpt
-        print(wpt_out[0])
-        x_rta = wpt_out[0] # Change to cur_wpt
-        y_rta = wpt_out[1] # Change to cur_wpt
+    while  x_tol == False and y_tol == False :
+        print quad_pose.pose
+        wpt = RTA_Gate(vehicle_x, vehicle_y, vehicle_xdot, vehicle_ydot, obstacle_list, target, current_mode, safe_complete, cur_wpt)
 
-        pose_stamp.pose.position.x = x_rta
-        pose_stamp.pose.position.y = y_rta
-        pose_stamp.pose.position.z = z_lin[i]
+        vehicle_x    = quad_pose.pose.position.x # This should be where the quadrotor is at
+        vehicle_y    = quad_pose.pose.position.y
+        vehicle_xdot = quad_orie.twist.linear.x
+        vehicle_ydot = quad_orie.twist.linear.y
+
+        current_mode  = wpt[1]
+        safe_complete = wpt[2]
+
+        cur_wpt = wpt[0]
+        x_rta   = cur_wpt[0] 
+        y_rta   = cur_wpt[1] 
+
+        pose_stamp.pose.position.x = 3 # This should tell the quad where to go
+        pose_stamp.pose.position.y = 3
+        pose_stamp.pose.position.z = z
+
+        x_tol = isclose(x_rta, x_targ, abs_tol=0.25)
+        y_tol = isclose(y_rta, y_targ, abs_tol=0.25)
 
         setpoint_pub.publish(pose_stamp)
         rospy.sleep(.5)
 
-        if i == len(range(gcoor)): 
-            break
+
+# def mission():
+
+#     pose_stamp = PoseStamped()
+
+#     vehicle_xdot  = 0.2
+#     vehicle_ydot  = 0.2
+#     obstacle_list =  np.array([[1, 5], [5, 2], [8, 9]])
+#     target        = np.array([x,y])
+#     current_mode  = 0
+#     safe_complete = 0
+
+#     if abs(x) >= abs(y) and abs(x) >= abs(z):
+#         gcoor = abs(x) 
+#         x_lin = linspace(0, x, gcoor)
+#         y_lin = linspace(0, y, gcoor)
+#         z_lin = linspace(0, z, gcoor)
+
+#     if abs(y) > abs(x) and abs(y) >= abs(z):
+#         gcoor = abs(y)
+#         x_lin = linspace(0, x, gcoor)
+#         y_lin = linspace(0, y, gcoor)
+#         z_lin = linspace(0, z, gcoor)
+
+#     if abs(z) > abs(x) and abs(z) > abs(y):
+#         gcoor = z
+#         x_lin = linspace(0, x, gcoor)
+#         y_lin = linspace(0, y, gcoor)
+#         z_lin = linspace(0, z, gcoor)
+
+#     cur_wpt = np.array([x_lin[0], y_lin[0]])
+
+#     for i in range(gcoor): # Change to while loop
+#         print(x_lin[i])
+#         print(y_lin[i])
+#         print(z_lin[i])
+
+#         wpt = RTA_Gate(x_lin[i], y_lin[i], vehicle_xdot, vehicle_ydot, obstacle_list, target, current_mode, safe_complete, cur_wpt)
+        
+#         wpt_out = wpt[0] # Change to cur_wpt
+#         print(wpt_out[0])
+#         x_rta = wpt_out[0] # Change to cur_wpt
+#         y_rta = wpt_out[1] # Change to cur_wpt
+
+#         pose_stamp.pose.position.x = x_rta
+#         pose_stamp.pose.position.y = y_rta
+#         pose_stamp.pose.position.z = z_lin[i]
+
+#         setpoint_pub.publish(pose_stamp)
+#         rospy.sleep(.5)
+
+#         if i == len(range(gcoor)): 
+#             break
 
 # Responsible for switching between performance and safe controller #
 #####################################################################
@@ -195,8 +269,6 @@ def RTA_Gate(vehicle_x, vehicle_y, vehicle_xdot, vehicle_ydot, obstacle_list, ta
             if violation == 0 and current_mode == 0:
                 wpt_performance = Performance_Controller(vehicle_x, vehicle_y, target)
                 #This would be reinforcement learning controller. We can replace with something else for now.
-                # wpt_out = wpt_performance # Assign wpt_ to a single variable that can be re-writen ########################### <--- Show Kendra
-                # print(wpt_out)
                 return wpt_performance, current_mode, safe_complete
 
             elif violation == 1 and current_mode == 0:
@@ -225,6 +297,10 @@ def RTA_Gate(vehicle_x, vehicle_y, vehicle_xdot, vehicle_ydot, obstacle_list, ta
                 print("def bottom")
                 return wpt_performance, current_mode, safe_complete
 
+
+def callback(msg):
+    print(msg.pose.pose)
+
 # Allows for enough time to cleanly kill the node #
 ###################################################
 def kill():
@@ -249,11 +325,10 @@ if __name__ == '__main__':
 
     # Subscribers
     state_sub      = rospy.Subscriber('mavros/state', State)
+    quad_pose       = rospy.Subscriber('UAV_pose', PoseStamped)
 
     # Publishers
     setpoint_pub   = rospy.Publisher('mavros/setpoint_position/local', PoseStamped, queue_size=10)
-    velocity_pub   = rospy.Publisher('mavros/setpoint_velocity/cmd_vel', TwistStamped, queue_size=10)
-    local_position = rospy.Publisher('mavros/local_position/pose', PoseStamped)
 
     # Services
     arming_serv    = rospy.ServiceProxy('mavros/cmd/arming', CommandBool)
@@ -267,7 +342,7 @@ if __name__ == '__main__':
     while not rospy.is_shutdown() and choice in ['1', '2', '3']:
         os.system('cls' if os.name == 'nt' else 'clear')
         menu()
-        choice = raw_input("Enter your imput: ");
+        choice = raw_input("Enter your input: ");
         x = 0
         y = 0
         z = 0
@@ -282,7 +357,6 @@ if __name__ == '__main__':
                 print("z must be greater than 0\nAutomatically setting z = 1")
                 rospy.sleep(2)
                 z = 1
-
             arm_takeoff()
 
         if choice == '2':
