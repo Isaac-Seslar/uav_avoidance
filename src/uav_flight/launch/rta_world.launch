@@ -40,4 +40,5 @@
         <arg name="tgt_system" value="$(eval 1 + arg('ID'))"/>
         <arg name="tgt_component" value="1"/>
     </include>
+    <!-- <node name="uav_position" pkg="uav_flight" type="uav_position_node.py" output="screen"/> -->
 </launch>
