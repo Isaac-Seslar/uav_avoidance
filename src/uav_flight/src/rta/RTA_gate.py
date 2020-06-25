@@ -45,6 +45,16 @@ def menu():
     print "1: Arm, Takeoff, and Loiter at altitude of 3m \
      \n2: Land \n3: Kill node"
 
+# Tolerance function #
+######################
+def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
+    return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
+
+# def local_pose_callback(msg):
+#         global quad_pose
+#         quad_pose = msg    # Store the message in a global variable for printing later
+
+
 # Arms quadrotor and commands it to takeoff and loiter at z = 3 #
 #################################################################
 def arm_takeoff():
@@ -83,7 +93,7 @@ def arm_takeoff():
             char = getch()
 
             if char == "1":
-                mission()
+                # mission()
                 char = 0
                 break
 
@@ -94,64 +104,113 @@ def arm_takeoff():
     except rospy.ServiceException as e:
         print("Failed to set OFFBOARD mode")
 
+def local_pose_callback(msg):
+    global quad_pose_x, quad_pose_y, quad_pose_z
+    quad_pose_x = msg.pose.position.x
+    quad_pose_y = msg.pose.position.y
+    quad_pose_z = msg.pose.position.z
+
 # Generates waypoints for the quadrotor top follow #
 ####################################################
 def mission():
 
-    pose_stamp = PoseStamped()
+    quad_pose_x = PoseStamped()
+    quad_pose_y = PoseStamped()
+    quad_pose_z = PoseStamped()
 
-    vehicle_xdot  = 0.2
-    vehicle_ydot  = 0.2
-    obstacle_list =  np.array([[1, 5], [5, 2], [8, 9]])
-    target        = np.array([x,y])
-    current_mode  = 0
-    safe_complete = 0
+    pose_sub = rospy.Subscriber('/mavros/local_position/pose', PoseStamped,
+                                local_pose_callback, queue_size = 10)
 
-    if abs(x) >= abs(y) and abs(x) >= abs(z):
-        gcoor = abs(x) 
-        x_lin = linspace(0, x, gcoor)
-        y_lin = linspace(0, y, gcoor)
-        z_lin = linspace(0, z, gcoor)
+    rate = rospy.Rate(10) #Loop operates at 10hz
 
-    if abs(y) > abs(x) and abs(y) >= abs(z):
-        gcoor = abs(y)
-        x_lin = linspace(0, x, gcoor)
-        y_lin = linspace(0, y, gcoor)
-        z_lin = linspace(0, z, gcoor)
+    while not rospy.is_shutdown():
 
-    if abs(z) > abs(x) and abs(z) > abs(y):
-        gcoor = z
-        x_lin = linspace(0, x, gcoor)
-        y_lin = linspace(0, y, gcoor)
-        z_lin = linspace(0, z, gcoor)
+        # print quad_pose_x
+        print quad_pose_x, quad_pose_y, quad_pose_z
+        rate.sleep()
 
-    cur_wpt = np.array([x_lin[0], y_lin[0]])
 
-    for i in range(gcoor): # Change to while loop
-        print(x_lin[i])
-        print(y_lin[i])
-        print(z_lin[i])
 
-        wpt = RTA_Gate(x_lin[i], y_lin[i], vehicle_xdot, vehicle_ydot, obstacle_list, target, current_mode, safe_complete, cur_wpt)
-        
-        wpt_out = wpt[0] # Change to cur_wpt
-        print(wpt_out[0])
-        x_rta = wpt_out[0] # Change to cur_wpt
-        y_rta = wpt_out[1] # Change to cur_wpt
 
-        pose_stamp.pose.position.x = x_rta
-        pose_stamp.pose.position.y = y_rta
-        pose_stamp.pose.position.z = z_lin[i]
 
-        setpoint_pub.publish(pose_stamp)
-        rospy.sleep(.5)
+    # def callback(msg):
+    #     global quad_pose_x, quad_pose_y, quad_pose_z
+    #     # quad_pose_x = rospy.loginfo(data.pose.position.x)
+    #     quad_pose_x = msg.pose.position.x
+    #     quad_pose_y = msg.pose.position.y
+    #     quad_pose_z = msg.pose.position.z
+    #     print quad_pose_x, quad_pose_y, quad_pose_z 
 
-        if i == len(range(gcoor)): 
-            break
+
+
+    # pose_sub = rospy.Subscriber('/mavros/local_position/pose', PoseStamped, callback)
+
+    # vehicle_x    = quad_pose_x
+    # vehicle_y    = quad_pose_y
+    # vehicle_xdot = 0.2 
+    # vehicle_ydot = 0.2
+
+    # rate = rospy.Rate(10) #Loop operates at 10hz
+
+    # # Define final (x,y) coordinate
+    # target = np.array([x,y])
+    # x_targ = target[0]
+    # y_targ = target[1]
+
+    # quad_pose_x = PoseStamped()
+    # quad_pose_y = PoseStamped()
+    # quad_pose_z = PoseStamped()
+    
+    # # Set up tolerances for ending the loop
+    # # x_tol = isclose(quad_pose_x, x_targ, abs_tol=0.25)
+    # # y_tol = isclose(quad_pose_y, y_targ, abs_tol=0.25)
+    # x_tol = 1
+    # y_tol = 1
+
+
+
+    # pose_stamp = PoseStamped()
+    
+
+    # while x_tol==1 and y_tol==1:
+
+    #     wpt = RTA_Gate(vehicle_x, vehicle_y, vehicle_xdot, vehicle_ydot, 
+    #         obstacle_list, target, current_mode, safe_complete, cur_wpt)
+
+    #     vehicle_x    = quad_pose_x
+    #     vehicle_y    = quad_pose_y
+    #     vehicle_xdot = 0.2 
+    #     vehicle_ydot = 0.2
+
+    #     current_mode  = wpt[1]
+    #     safe_complete = wpt[2]
+
+    #     cur_wpt = wpt[0]
+
+    #     quad_pose_x = cur_wpt[0] 
+    #     quad_pose_y = cur_wpt[1]
+
+    #     pose_stamp.pose.position.x = quad_pose_x
+    #     pose_stamp.pose.position.y = quad_pose_y
+    #     pose_stamp.pose.position.z = z
+
+    #     x_tol = isclose(quad_pose_x, x_targ, abs_tol=0.25)
+    #     y_tol = isclose(quad_pose_y, y_targ, abs_tol=0.25)
+
+    #     setpoint_pub.publish(pose_stamp)
+
+    #     rate.sleep()
+
+
+
+
+
+    
 
 # Responsible for switching between performance and safe controller #
 #####################################################################
-def RTA_Gate(vehicle_x, vehicle_y, vehicle_xdot, vehicle_ydot, obstacle_list, target, current_mode, safe_complete, cur_wpt):
+def RTA_Gate(vehicle_x, vehicle_y, vehicle_xdot, vehicle_ydot, 
+    obstacle_list, target, current_mode, safe_complete, cur_wpt):
 
         #Parameters:
         obs_to_consider = 2 #Number of obstacles to consider in avoidance
@@ -248,17 +307,18 @@ if __name__ == '__main__':
     rospy.init_node('RTA_Gate', anonymous=False)
 
     # Subscribers
-    state_sub      = rospy.Subscriber('mavros/state', State)
+    state_sub      = rospy.Subscriber('/mavros/state', State)
+    # pose_sub = rospy.Subscriber('/mavros/local_position/pose', PoseStamped, local_pose_callback, queue_size=10)
 
     # Publishers
-    setpoint_pub   = rospy.Publisher('mavros/setpoint_position/local', PoseStamped, queue_size=10)
-    velocity_pub   = rospy.Publisher('mavros/setpoint_velocity/cmd_vel', TwistStamped, queue_size=10)
-    local_position = rospy.Publisher('mavros/local_position/pose', PoseStamped)
+    setpoint_pub   = rospy.Publisher('/mavros/setpoint_position/local', PoseStamped, queue_size=10)
+    velocity_pub   = rospy.Publisher('/mavros/setpoint_velocity/cmd_vel', TwistStamped, queue_size=10)
+    local_position = rospy.Publisher('/mavros/local_position/pose', PoseStamped)
 
     # Services
-    arming_serv    = rospy.ServiceProxy('mavros/cmd/arming', CommandBool)
-    flight_mode    = rospy.ServiceProxy('mavros/set_mode', SetMode)
-    takeoffService = rospy.ServiceProxy('mavros/cmd/takeoff', CommandTOL)
+    arming_serv    = rospy.ServiceProxy('/mavros/cmd/arming', CommandBool)
+    flight_mode    = rospy.ServiceProxy('/mavros/set_mode', SetMode)
+    takeoffService = rospy.ServiceProxy('/mavros/cmd/takeoff', CommandTOL)
 
     rate = rospy.Rate(20.0)
 
@@ -267,7 +327,7 @@ if __name__ == '__main__':
     while not rospy.is_shutdown() and choice in ['1', '2', '3']:
         os.system('cls' if os.name == 'nt' else 'clear')
         menu()
-        choice = raw_input("Enter your imput: ");
+        choice = raw_input("Enter your input: ");
         x = 0
         y = 0
         z = 0
@@ -276,14 +336,15 @@ if __name__ == '__main__':
             print "Enter destination coordinates: \n"
             x = int(raw_input('x = '))
             y = int(raw_input('y = '))
-            z = int(raw_input('z = '))       
+            z = int(raw_input('z = '))    
 
             if z <= 0:
                 print("z must be greater than 0\nAutomatically setting z = 1")
                 rospy.sleep(2)
                 z = 1
 
-            arm_takeoff()
+            # arm_takeoff()
+            mission()
 
         if choice == '2':
             offb_set_mode = flight_mode(custom_mode="AUTO.LAND")
