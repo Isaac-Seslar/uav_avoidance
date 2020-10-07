@@ -305,7 +305,7 @@ if __name__ == '__main__':
     # Publishers
     setpoint_pub   = rospy.Publisher('/mavros/setpoint_position/local', PoseStamped, queue_size=10)
     velocity_pub   = rospy.Publisher('/mavros/setpoint_velocity/cmd_vel', TwistStamped, queue_size=10)
-    local_position = rospy.Publisher('/mavros/local_position/pose', PoseStamped)
+    # local_position = rospy.Publisher('/mavros/local_position/pose', PoseStamped)
 
     # Services
     arming_serv    = rospy.ServiceProxy('/mavros/cmd/arming', CommandBool)

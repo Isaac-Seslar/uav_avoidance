@@ -86,9 +86,9 @@ int main(int argc, char **argv)
     ROS_INFO("Takeoff initiatied...");
     for( int i = 100; i > 0; --i ){
         
-        pose.pose.position.x = 0;
-        pose.pose.position.y = 0;
-        pose.pose.position.z = 2;
+        pose.pose.position.x = 0.5;
+        pose.pose.position.y = 0.5;
+        pose.pose.position.z = 0.5;
         local_pos_pub.publish(pose);
         
         s = 1;
