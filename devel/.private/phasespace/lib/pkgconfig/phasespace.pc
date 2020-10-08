@@ -1,0 +1,8 @@
+prefix=/home/isaac/uav_avoidance/devel/.private/phasespace
+
+Name: phasespace
+Description: Description of phasespace
+Version: 0.0.0
+Cflags: -I/home/isaac/uav_avoidance/devel/.private/phasespace/include
+Libs: -L${prefix}/lib 
+Requires: 

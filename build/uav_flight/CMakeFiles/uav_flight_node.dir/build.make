@@ -96,6 +96,7 @@ uav_flight_node_EXTERNAL_OBJECTS =
 /home/isaac/uav_avoidance/devel/.private/uav_flight/lib/uav_flight/uav_flight_node: /opt/ros/melodic/lib/libdynamic_reconfigure_config_init_mutex.so
 /home/isaac/uav_avoidance/devel/.private/uav_flight/lib/uav_flight/uav_flight_node: /opt/ros/melodic/lib/libmavros.so
 /home/isaac/uav_avoidance/devel/.private/uav_flight/lib/uav_flight/uav_flight_node: /usr/lib/x86_64-linux-gnu/libGeographic.so
+/home/isaac/uav_avoidance/devel/.private/uav_flight/lib/uav_flight/uav_flight_node: /opt/ros/melodic/lib/libdiagnostic_updater.so
 /home/isaac/uav_avoidance/devel/.private/uav_flight/lib/uav_flight/uav_flight_node: /opt/ros/melodic/lib/libeigen_conversions.so
 /home/isaac/uav_avoidance/devel/.private/uav_flight/lib/uav_flight/uav_flight_node: /opt/ros/melodic/lib/liborocos-kdl.so.1.4.0
 /home/isaac/uav_avoidance/devel/.private/uav_flight/lib/uav_flight/uav_flight_node: /opt/ros/melodic/lib/libmavconn.so

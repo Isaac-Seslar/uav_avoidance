@@ -382,6 +382,7 @@ avoidance_EXTERNAL_OBJECTS =
 /home/isaac/uav_avoidance/devel/.private/avoidance/lib/libavoidance.so: /opt/ros/melodic/lib/libtf.so
 /home/isaac/uav_avoidance/devel/.private/avoidance/lib/libavoidance.so: /opt/ros/melodic/lib/libmavros.so
 /home/isaac/uav_avoidance/devel/.private/avoidance/lib/libavoidance.so: /usr/lib/x86_64-linux-gnu/libGeographic.so
+/home/isaac/uav_avoidance/devel/.private/avoidance/lib/libavoidance.so: /opt/ros/melodic/lib/libdiagnostic_updater.so
 /home/isaac/uav_avoidance/devel/.private/avoidance/lib/libavoidance.so: /opt/ros/melodic/lib/libeigen_conversions.so
 /home/isaac/uav_avoidance/devel/.private/avoidance/lib/libavoidance.so: /opt/ros/melodic/lib/liborocos-kdl.so.1.4.0
 /home/isaac/uav_avoidance/devel/.private/avoidance/lib/libavoidance.so: /opt/ros/melodic/lib/libmavconn.so

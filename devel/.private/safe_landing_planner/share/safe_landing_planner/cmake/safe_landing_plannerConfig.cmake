@@ -154,7 +154,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/isaac/uav_avoidance/devel/.private/safe_landing_planner/lib;/home/isaac/uav_avoidance/devel/lib;/home/isaac/catkin_ws/devel/lib;/home/isaac/uav_ws/devel/lib;/opt/ros/melodic/lib)
+    foreach(path /home/isaac/uav_avoidance/devel/.private/safe_landing_planner/lib;/home/isaac/uav_avoidance/devel/lib;/opt/ros/melodic/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+  <node name="phasespace" pkg="phasespace" type="phasespace_node" output="screen" >
+    <param name="profile" value="race" />
+    <param name="server_ip" value="192.168.1.230" />
+    <param name="rigid_body_folder" value="$(find phasespace)/mocap_config" />
+  </node>
+</launch>

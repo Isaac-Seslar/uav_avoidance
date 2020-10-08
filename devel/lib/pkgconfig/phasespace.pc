@@ -1,0 +1,1 @@
+/home/isaac/uav_avoidance/devel/.private/phasespace/lib/pkgconfig/phasespace.pc

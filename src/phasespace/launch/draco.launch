@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+
+<launch>
+
+  <arg name="ps_profile" default="Draco"/>
+  <arg name="ps_ip" default="192.168.1.230" />
+  <arg name="ps_config" default="draco1" />
+  <arg name="run_mavros" default="false" />
+  <arg name="run_rviz" default="true" />
+  <arg name="fcu_url" default="/dev/ttyESP8266:921600" />
+
+  <!-- Phasespace Pose Stream -->
+  <node name="phasespace" pkg="phasespace" type="phasespace_node" output="screen" >
+    <param name="profile" value="$(arg ps_profile)" />
+    <param name="server_ip" value="$(arg ps_ip)" />
+    <param name="rigid_body_folder" value="$(find phasespace)/mocap_config" />
+    <!--<remap from="$(arg ps_config)/pose" to="mavros/vision_pose/pose" />-->
+  </node>
+
+  <!-- Throttle MAVROS vision_pose to 50 Hz -->
+] <node name="throttler" pkg="topic_tools" type="throttle" args="messages $(arg ps_config)/pose 52 mavros/vision_pose/pose" />
+
+  <!-- Publish static transform to force sensor -->
+  <!--<node pkg="tf" type="static_transform_publisher" name="map_to_load" args="0.0508 3.302 1.0668 0 0 1.5707 map fam_lc 100" /> -->
+  <node pkg="tf" type="static_transform_publisher" name="map_to_load" args="0.0 0.0 0.0 0 0 0.0 map fam_lc 100" />
+
+  <!-- MAVROS -->
+  <arg name="ID" default="0"/>
+  <include if="$(arg run_mavros)" file="$(find mavros)/launch/px4.launch">
+    <arg name="fcu_url" value="$(arg fcu_url)"/>
+    <arg name="gcs_url" value=""/>
+    <arg name="tgt_system" value="$(eval 1 + arg('ID'))"/>
+    <arg name="tgt_component" value="1"/>
+  </include>
+
+  <!-- RVIZ -->
+  <node if="$(arg run_rviz)" name="fam_rviz" pkg="rviz" type="rviz" output="screen" />
+</launch>

@@ -1,0 +1,215 @@
+#include <ros/ros.h>
+#include <geometry_msgs/TwistStamped.h>
+#include <geometry_msgs/PoseStamped.h>
+#include <nav_msgs/Odometry.h>
+#include <phasespace/FullState.h>
+
+#include <iostream>
+#include <Eigen/Dense>
+#include <Eigen/Geometry>
+
+using namespace std;
+using namespace Eigen;
+
+// need a class in order publish in the callback
+class SubscribeAndPublish
+{
+    ros::NodeHandle nh;
+    ros::Publisher velPub;
+    ros::Publisher bodyVelPub;
+    ros::Publisher odomPub;
+    ros::Publisher fullPub;
+    ros::Subscriber mocapSub;
+    
+    int window_size;            // Number of data points to store
+    bool buffer_full;           // Estimation will start after buffer is full for first time
+    VectorXd t_buff;            // ring buffer for time data
+    VectorXd pos_buff;          // ring buffer for position data
+    VectorXd quat_buff;         // ring buffer for orientation data
+    int tInd;                   // index of oldest time data. Data at this index gets replaced with new data
+    int pInd;                   // index of oldest position data Data at this index gets replaced with new data
+    int qInd;                   // index of oldest orientation data Data at this index gets replaced with new data
+public:
+    SubscribeAndPublish()
+    {
+        // Parameters
+        ros::NodeHandle nhp("~");
+        nhp.param<int>("window_size",window_size,30);
+
+        // Initialize buffers
+        tInd = 0;
+        pInd = 0;
+        qInd = 0;
+        t_buff.resize(window_size);
+        pos_buff.resize(3*window_size);
+        quat_buff.resize(4*window_size);
+        buffer_full = false;
+        
+        // Publishers
+        velPub = nh.advertise<geometry_msgs::TwistStamped>("vel",1);
+        bodyVelPub = nh.advertise<geometry_msgs::TwistStamped>("body_vel",1);
+        odomPub = nh.advertise<nav_msgs::Odometry>("odom",1);
+        fullPub = nh.advertise<phasespace::FullState>("full_state",1);
+
+        //Mocap subscriber
+        mocapSub = nh.subscribe("pose",10,&SubscribeAndPublish::poseCB,this);
+    }
+    
+    void poseCB(const geometry_msgs::PoseStampedConstPtr& pose)
+    {
+        // Setting up least squares problem A*theta = P. theta is made up of the coefficients for the best fit quadratic,
+        // i.e., X = p2x*T^2 + p1x*T + p0x, Y = p2y*T^2 + p1y*T + p0y, Z = p2z*T^2 + p1z*T + p0z.
+        // Velocity/Acceleration is estimated using analytical derivatives. 
+        // Each block of data is arranged like this:
+        // [Xi]     [1,Ti,Ti^2,0,0,0,0,0,0] * [p0x]
+        // [Yi]  =  [0,0,0,1,Ti,Ti^2,0,0,0]   [p1x]
+        // [Zi]     [0,0,0,0,0,0,1,Ti,Ti^2]   [p2x]
+        //  \/      \_________  _________/    [p0y]
+        //  Di                \/              [p1y]
+        //                    Ai              [p2y]
+        //                                    [p0z]
+        //                                    [p1z]
+        //                                    [p2z]
+        //                                     \/
+        //                                   theta
+        //
+        // and then data is all stacked like this, where n is the windows_size:
+        // [D1]     [A1] * [p0x]
+        // [D2]  =  [A2]   [p1x]
+        //  :        :     [p2x]
+        // [Dn]     [An]   [p0y]
+        //                 [p1y]
+        //                 [p2y]
+        //                 [p0z]
+        //                 [p1z]
+        //                 [p2z]
+        
+        t_buff(tInd) = pose->header.stamp.toSec();
+        pos_buff.segment<3>(pInd) << pose->pose.position.x, pose->pose.position.y, pose->pose.position.z;
+        Vector4d q;
+        q << pose->pose.orientation.x, pose->pose.orientation.y, pose->pose.orientation.z, pose->pose.orientation.w;
+        int lastQind = (qInd + (4*window_size-4))%(4*window_size); // decrement with rollover. Can't do (qInd - 4)%(4*window_size), it results in negative number
+        Vector4d lastQ = quat_buff.segment<4>(lastQind);
+        if ((lastQ-(-1*q)).norm() < (lastQ-q).norm()) // deal with equivalent quaternions
+        {
+            q *= -1;
+        }
+        quat_buff.segment<4>(qInd) << q;
+
+        // Increment index, roll back over
+        tInd = (tInd+1)%window_size;
+        pInd = (pInd + 3)%(3*window_size);
+        qInd = (qInd + 4)%(4*window_size);
+
+        // If the index has rolled over once, the buffer is full
+        if (tInd == 0)
+        {
+            buffer_full = true;
+        }
+
+        if (buffer_full)
+        {
+            // normalize time for numerical stability/accuracy of subsequent matrix inversion
+            double delT = t_buff.maxCoeff() - t_buff.minCoeff();
+            VectorXd t_norm = (t_buff.array() - t_buff.minCoeff())/delT;
+
+            // Solve LLS for best fit line parameters
+            MatrixXd Apos(3*window_size,9);
+            MatrixXd Aquat(4*window_size,12);
+            for (int ii = 0; ii < window_size; ii++)
+            {
+                Apos.block<3,9>(ii*3,0) << 1,t_norm(ii),std::pow(t_norm(ii),2),0,0,0,0,0,0,
+                                           0,0,0,1,t_norm(ii),std::pow(t_norm(ii),2),0,0,0,
+                                           0,0,0,0,0,0,1,t_norm(ii),std::pow(t_norm(ii),2);
+                Aquat.block<4,12>(ii*4,0) << 1,t_norm(ii),std::pow(t_norm(ii),2),0,0,0,0,0,0,0,0,0,
+                                             0,0,0,1,t_norm(ii),std::pow(t_norm(ii),2),0,0,0,0,0,0,
+                                             0,0,0,0,0,0,1,t_norm(ii),std::pow(t_norm(ii),2),0,0,0,
+                                             0,0,0,0,0,0,0,0,0,1,t_norm(ii),std::pow(t_norm(ii),2);
+            }
+            Matrix<double,9,1> theta_pos = Apos.jacobiSvd(ComputeThinU | ComputeThinV).solve(pos_buff);
+            Matrix<double,12,1> theta_quat = Aquat.jacobiSvd(ComputeThinU | ComputeThinV).solve(quat_buff);
+
+            // Get velocities (linear in world coordinates, angular in body coordinates)
+            Vector3d v, a;
+            Vector4d qDot;
+            Vector3d wbody;
+            Matrix<double,4,3> B;
+            v << (2*theta_pos(2) + theta_pos(1))/delT, (2*theta_pos(5) + theta_pos(4))/delT, (2*theta_pos(8) + theta_pos(7))/delT; // rescaled to account for time normalization
+            a << 2*theta_pos(2)/std::pow(delT,2), 2*theta_pos(5)/std::pow(delT,2), 2*theta_pos(8)/std::pow(delT,2); // rescaled to account for time normalization
+            qDot << (2*theta_quat(2) + theta_quat(1))/delT, (2*theta_quat(5) + theta_quat(4))/delT, (2*theta_quat(8) + theta_quat(7))/delT, (2*theta_quat(11) + theta_quat(10))/delT; // rescaled to account for time normalization
+            diffMat(q,B);
+            wbody = 2*(B.transpose())*qDot;
+
+            // Transform velocities (linear in body coordinates, angular in world coordinates)
+            Quaterniond quat(q(3),q(0),q(1),q(2));
+            Vector3d w = quat*wbody;
+            Vector3d vbody = quat.conjugate()*v;
+            //Vector3d abody = quat.conjugate()*a;
+
+            // Publish
+            geometry_msgs::TwistStamped msg = geometry_msgs::TwistStamped();
+            msg.header.stamp = pose->header.stamp;
+            msg.header.frame_id = pose->header.frame_id;
+            msg.twist.linear.x = v(0);
+            msg.twist.linear.y = v(1);
+            msg.twist.linear.z = v(2);
+            msg.twist.angular.x = w(0);
+            msg.twist.angular.y = w(1);
+            msg.twist.angular.z = w(2);
+            velPub.publish(msg);
+
+            geometry_msgs::TwistStamped msgbody = geometry_msgs::TwistStamped();
+            msgbody.header.stamp = pose->header.stamp;
+            msgbody.header.frame_id = pose->header.frame_id+"_body";
+            msgbody.twist.linear.x = vbody(0);
+            msgbody.twist.linear.y = vbody(1);
+            msgbody.twist.linear.z = vbody(2);
+            msgbody.twist.angular.x = wbody(0);
+            msgbody.twist.angular.y = wbody(1);
+            msgbody.twist.angular.z = wbody(2);
+            bodyVelPub.publish(msgbody);
+
+            nav_msgs::Odometry odomMsg;
+            odomMsg.header.stamp = pose->header.stamp;
+            odomMsg.header.frame_id = "world";
+            odomMsg.child_frame_id = pose->header.frame_id;
+            odomMsg.pose.pose = pose->pose;
+            odomMsg.twist.twist = msg.twist;
+            odomPub.publish(odomMsg);
+
+            phasespace::FullState stateMsg;
+            stateMsg.header.stamp = pose->header.stamp;
+            stateMsg.header.frame_id = "world";
+            stateMsg.pose = pose->pose;
+            stateMsg.twist = msg.twist;
+            stateMsg.accel.linear.x = a(0);
+            stateMsg.accel.linear.y = a(1);
+            stateMsg.accel.linear.z = a(2);
+            fullPub.publish(stateMsg);
+        }
+    }
+        
+    // Calculate differential matrix for relationship between quaternion derivative and angular velocity.
+    // qDot = 1/2*B*omega => omega = 2*B^T*qDot 
+    // See strapdown inertial book. If quaternion is orientation of frame 
+    // B w.r.t N in the sense that nP = q*bP*q', omega is ang. vel of frame B w.r.t. N,
+    // i.e. N_w_B, expressed in the B coordinate system
+    void diffMat(const Vector4d &q, Matrix<double,4,3> &B)
+    {
+        B << q(3), -q(2), q(1), q(2), q(3), -q(0), -q(1), q(0), q(3), -q(0), -q(1), -q(2);
+    }
+
+
+};//End of class SubscribeAndPublish
+
+
+int main(int argc, char** argv)
+{
+    ros::init(argc, argv, "filter_node");
+    
+    SubscribeAndPublish sap;
+    
+    ros::spin();
+    return 0;
+}
+

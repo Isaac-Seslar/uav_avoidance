@@ -105,6 +105,7 @@ local_planner_nodelet_EXTERNAL_OBJECTS =
 /home/isaac/uav_avoidance/devel/.private/local_planner/lib/liblocal_planner_nodelet.so: /usr/lib/x86_64-linux-gnu/libflann_cpp_s.a
 /home/isaac/uav_avoidance/devel/.private/local_planner/lib/liblocal_planner_nodelet.so: /opt/ros/melodic/lib/libnodeletlib.so
 /home/isaac/uav_avoidance/devel/.private/local_planner/lib/liblocal_planner_nodelet.so: /opt/ros/melodic/lib/libbondcpp.so
+/home/isaac/uav_avoidance/devel/.private/local_planner/lib/liblocal_planner_nodelet.so: /usr/lib/x86_64-linux-gnu/libuuid.so
 /home/isaac/uav_avoidance/devel/.private/local_planner/lib/liblocal_planner_nodelet.so: /usr/lib/x86_64-linux-gnu/libpcl_common.so
 /home/isaac/uav_avoidance/devel/.private/local_planner/lib/liblocal_planner_nodelet.so: /usr/lib/x86_64-linux-gnu/libpcl_octree.so
 /home/isaac/uav_avoidance/devel/.private/local_planner/lib/liblocal_planner_nodelet.so: /usr/lib/x86_64-linux-gnu/libpcl_io.so
@@ -276,6 +277,7 @@ local_planner_nodelet_EXTERNAL_OBJECTS =
 /home/isaac/uav_avoidance/devel/.private/local_planner/lib/liblocal_planner_nodelet.so: /opt/ros/melodic/lib/libtopic_tools.so
 /home/isaac/uav_avoidance/devel/.private/local_planner/lib/liblocal_planner_nodelet.so: /opt/ros/melodic/lib/libmavros.so
 /home/isaac/uav_avoidance/devel/.private/local_planner/lib/liblocal_planner_nodelet.so: /usr/lib/x86_64-linux-gnu/libGeographic.so
+/home/isaac/uav_avoidance/devel/.private/local_planner/lib/liblocal_planner_nodelet.so: /opt/ros/melodic/lib/libdiagnostic_updater.so
 /home/isaac/uav_avoidance/devel/.private/local_planner/lib/liblocal_planner_nodelet.so: /opt/ros/melodic/lib/libeigen_conversions.so
 /home/isaac/uav_avoidance/devel/.private/local_planner/lib/liblocal_planner_nodelet.so: /opt/ros/melodic/lib/liborocos-kdl.so.1.4.0
 /home/isaac/uav_avoidance/devel/.private/local_planner/lib/liblocal_planner_nodelet.so: /opt/ros/melodic/lib/libmavconn.so

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<launch>
+
+  <param name="use_sim_time" value="true" />
+
+  <!-- Publish static transform to force sensor -->
+  <!--<node pkg="tf" type="static_transform_publisher" name="map_to_load" args="0.0508 3.302 1.0668 0 0 1.5707 map fam_lc 100" /> -->
+  <node pkg="tf" type="static_transform_publisher" name="map_to_load" args="0.0 0.0 0.0 0 0 0.0 map fam_lc 100" />
+
+  <!-- RVIZ -->
+  <node name="fam_rviz" pkg="rviz" type="rviz" args="-d /home/dmcarth/.rviz/fam_uav.rviz" output="screen" />
+
+</launch>

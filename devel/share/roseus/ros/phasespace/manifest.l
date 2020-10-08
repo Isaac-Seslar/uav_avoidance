@@ -1,0 +1,1 @@
+/home/isaac/uav_avoidance/devel/.private/phasespace/share/roseus/ros/phasespace/manifest.l
