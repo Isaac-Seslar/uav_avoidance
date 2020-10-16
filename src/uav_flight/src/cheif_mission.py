@@ -38,26 +38,26 @@ def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
 
 if __name__ == '__main__':
 
-    rospy.init_node('mission', anonymous=False)
+    rospy.init_node('chief_mission', anonymous=False)
 
     # Publishers
-    setpnt_pub  = rospy.Publisher('/mavros1/setpoint_position/local',
+    setpnt_pub  = rospy.Publisher('/chief/setpoint_position/local',
         			  				PoseStamped, queue_size=10)
     # velcty_pub  = rospy.ServiceProxy('/mavroslocal')
 
     # Subscribers
-    state_sub   = rospy.Subscriber('/mavros1/state', State, 
+    state_sub   = rospy.Subscriber('/chief/state', State, 
         							state_callback, queue_size=10)
 
-    pose_sub    = rospy.Subscriber('/mavros1/vision_pose/pose', PoseStamped, 
+    pose_sub    = rospy.Subscriber('/chief/vision_pose/pose', PoseStamped, 
 									pose_callback, queue_size=10) 
 
 
     # Services
-    setmod_serv  = rospy.ServiceProxy('/mavros1/set_mode', SetMode)
-    arming_serv  = rospy.ServiceProxy('/mavros1/cmd/arming', CommandBool)
-    takeoff_serv = rospy.ServiceProxy('/mavros1/cmd/takeoff', CommandTOL)
-    landing_serv = rospy.ServiceProxy('/mavros1/cmd/land', CommandTOL)
+    setmod_serv  = rospy.ServiceProxy('/chief/set_mode', SetMode)
+    arming_serv  = rospy.ServiceProxy('/chief/cmd/arming', CommandBool)
+    takeoff_serv = rospy.ServiceProxy('/chief/cmd/takeoff', CommandTOL)
+    landing_serv = rospy.ServiceProxy('/chief/cmd/land', CommandTOL)
 
     # Time setup
     now       = rospy.Time.now()
@@ -72,14 +72,14 @@ if __name__ == '__main__':
       if quad_obj.state.mode=="OFFBOARD":
    			if not quad_obj.state.armed==True:
    				print "Arming..."
-   				rospy.wait_for_service('/mavros1/cmd/arming')
+   				rospy.wait_for_service('/chief/cmd/arming')
    				arming_serv(True)
    				rospy.sleep(2)
 
 				print "Taking Off..."
-				quad_obj.quad_goal.pose.position.x = 1
-				quad_obj.quad_goal.pose.position.y = 1
-				quad_obj.quad_goal.pose.position.z = 1
+				quad_obj.quad_goal.pose.position.x = -1
+				quad_obj.quad_goal.pose.position.y = -1
+				quad_obj.quad_goal.pose.position.z = 1.5
 
 				for i in range(500):
 					setpnt_pub.publish(quad_obj.quad_goal)
@@ -109,14 +109,14 @@ if __name__ == '__main__':
     # y_tol = isclose(cur_posy, origin[1], abs_tol=0.25)
     # z_tol = isclose(cur_posz, origin[2], abs_tol=0.25)
     # toles = all([x_tol, y_tol, z_tol])
-    rospy.wait_for_service('/mavros1/set_mode')
+    rospy.wait_for_service('/chief/set_mode')
     while not quad_obj.state.mode=="OFFBOARD":
     	setpnt_pub.publish(quad_obj.quad_goal)
     	setmod_serv(custom_mode="OFFBOARD")
     	rate.sleep()
 
-    waypnt_x = [-1,-1,-1,0,1,1,1,0,1]
-    waypnt_y = [ 1,0,-1,-1,-1,0,1,1,1]
+    waypnt_x = [-1,-1,-1,0,1,1,1,0,-1]
+    waypnt_y = [ 1,0,-1,-1,-1,0,1,1,-1]
     print "Starting Mission"
 		# Circle flight
 
@@ -127,7 +127,7 @@ if __name__ == '__main__':
 
 		quad_obj.quad_goal.pose.position.x = waypnt_x[i]
 		quad_obj.quad_goal.pose.position.y = waypnt_y[i]
-		quad_obj.quad_goal.pose.position.z = 1
+		quad_obj.quad_goal.pose.position.z = 2
 
 		for ii in range(100):
 			setpnt_pub.publish(quad_obj.quad_goal)
