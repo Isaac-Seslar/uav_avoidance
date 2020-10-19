@@ -11,7 +11,7 @@ import std_msgs
 import tf 
 import sys, select, os, tty, termios
 
-from geometry_msgs.msg import PoseStamped, TwistStamped
+from geometry_msgs.msg import PoseStamped, TwistStamped, TransformStamped
 from numpy import linspace, array
 from mavros_msgs.msg import GlobalPositionTarget, State
 from mavros_msgs.srv import CommandBool, SetMode, CommandTOL
@@ -20,6 +20,32 @@ from mavros_msgs.srv import CommandBool, SetMode, CommandTOL
 from com_func import *
 from safe_cont import *
 from perform_cont import *
+
+#############
+# Class Def #
+#############
+
+class obs_obj:
+	obs_l = PoseStamped()
+	obs_s = PoseStamped()
+
+class quad_obj:
+	vehicle = PoseStamped()
+	float_x = float() 
+	float_y = float()
+	float_z = float()
+
+	vehicle_dot = TwistStamped()
+	float_xdot  = float()
+	float_ydot  = float()
+	float_zdot  = float()
+
+	state         = State()
+	quad_goal     = PoseStamped()
+	offb_set_mode = SetMode()
+	arm_cmd       = CommandBool()
+	takeoff_cmd   = CommandTOL()
+	landing_cmd   = CommandTOL()
 
 ###############
 # Definitions #
@@ -38,127 +64,51 @@ def getch():
         termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
     return ch
 
-# Defines the choices availible #
-#################################
-def menu():
-    print "1: Arm, Takeoff, and Loiter at altitude of 3m \
-     \n2: Land \n3: Kill node"
-
 # Tolerance function #
 ######################
 def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
     return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
 
-# Arms quadrotor and commands it to takeoff and loiter at z = 3 #
-#################################################################
-def arm_takeoff():
-    rospy.wait_for_service('mavros/set_mode')
-    rospy.wait_for_service('mavros/cmd/arming')
-
-    pose_stamp = PoseStamped()
-
-    pose_stamp.pose.position.x = 0
-    pose_stamp.pose.position.y = 0
-    pose_stamp.pose.position.z = 3
-
-
-    for i in range(20):
-        setpoint_pub.publish(pose_stamp)
-        rate.sleep()
-
-    try:
- 
-        last_request = rospy.Time.now()
-
-        offb_set_mode = flight_mode(custom_mode="OFFBOARD")
-        arm_client = arming_serv(True)
-        print "Take off and hover initiated"
-        char = 0
-
-        
-        while True:
-
-            os.system('cls' if os.name == 'nt' else 'clear')
-            print "1: Start Mission\n2: Abort"
-
-            setpoint_pub.publish(pose_stamp)
-            rospy.sleep(.25)
-            char = getch()
-
-            if char == "1":
-                mission()
-                char = 0
-                break
-
-            if char == "2":
-                offb_set_mode = flight_mode(custom_mode="AUTO.LAND")
-                break
-
-    except rospy.ServiceException as e:
-        print("Failed to set OFFBOARD mode")
-
-# Callback functions for gps values #
+# Callback functions for local pose #
 #####################################
 def pose_callback(msg):
-    global vehicle_x, vehicle_y, vehicle_z
-    global float_x, float_y, float_z
+    quad_obj.vehicle.x = msg.pose.position.x
+    quad_obj.vehicle.y = msg.pose.position.y
+    quad_obj.vehicle.z = msg.pose.position.z
 
-    vehicle_x = msg.pose.position.x
-    vehicle_y = msg.pose.position.y
-    vehicle_z = msg.pose.position.z
-    float_x   = float(msg.pose.position.x) 
-    float_y   = float(msg.pose.position.y)
-    float_z   = float(msg.pose.position.z)
+    float_x = float(msg.pose.position.x) 
+    float_y = float(msg.pose.position.y)
+    float_z = float(msg.pose.position.z)
 
-def velocity_callback(msg2):
-    global vehicle_xdot, vehicle_ydot, vehicle_zdot
-    global float_xdot, float_ydot, float_zdot
+def velocity_callback(msg):
+	quad_obj.vehicle_dot.x = msg.twist.linear.x
+	quad_obj.vehicle_dot.y = msg.twist.linear.y
+	quad_obj.vehicle_dot.z = msg.twist.linear.z
 
-    vehicle_xdot = msg2.twist.linear.x
-    vehicle_ydot = msg2.twist.linear.y
-    vehicle_zdot = msg2.twist.linear.z
-    float_xdot   = float(msg2.twist.linear.x)
-    float_ydot   = float(msg2.twist.linear.y)
-    float_zdot   = float(msg2.twist.linear.z)
+	float_xdot = float(msg.twist.linear.x)
+	float_ydot = float(msg.twist.linear.y)
+	float_zdot = float(msg.twist.linear.z)
 
+def obs_l_callback(msg):
+	obs_obj.obs_l = msg.transform.translation
+	
 
-# Generates waypoints for the quadrotor top follow #
-####################################################
-def mission():
-    global vehicle_x, vehicle_y, vehicle_z
-    global float_x, float_y, float_z
-    global vehicle_xdot, vehicle_ydot, vehicle_zdot
-    global float_xdot, float_ydot, float_zdot
-
-    pose_stamp   = PoseStamped()
-    vehicle_x    = PoseStamped()
-    vehicle_y    = PoseStamped()
-    vehicle_z    = PoseStamped()
-    vehicle_xdot = TwistStamped()
-    vehicle_ydot = TwistStamped()
-    vehicle_zdot = TwistStamped()
-
-    float_x      = float()
-    float_y      = float()
-    float_xdot   = float()
-    float_ydot   = float()
-
-    pose_sub = rospy.Subscriber('/mavros/local_position/pose', PoseStamped,
-                                pose_callback, queue_size=10)
-    velo_sub = rospy.Subscriber('/mavros/local_position/velocity', TwistStamped,
-                                velocity_callback, queue_size=10)
-
-    rate = rospy.Rate(100) #Loop operates at 100hz. <-------This value can be adjusted
-
+def obs_s_callback(msg):
+	obs_obj.obs_s = msg.transform.translation
+	
+# Generates waypoints for the quadrotor to follow #
+###################################################
+def mission(x,y,z,rate):
     # Defines where the obstacles are on the grid
-    obstacle_list =  np.array([[1, 5], [5, 2], [8, 9]])
+    obstacle_list = np.array([obs_obj.obs_l.x,obs_obj.obs_l.y],
+    						[obs_obj.obs_s.x,obs_obj.obs_s.y])
 
     # Initialize values for RTA_Gate()
     current_mode  = 0
     safe_complete = 0
 
     # Initialize the first waypoint. This will be updated in the loop
-    cur_wpt = np.array([float_x, float_y])
+    cur_wpt = np.array([quad_obj.float_x,quad_obj.float_y])
     x_rta   = cur_wpt[0]
     y_rta   = cur_wpt[1]
 
@@ -168,13 +118,13 @@ def mission():
     y_targ = target[1]
 
     # Set up tolerances for ending the loop
-    x_tol = isclose(float_x, x_targ, abs_tol=0.25)
-    y_tol = isclose(float_y, y_targ, abs_tol=0.25)
+    x_tol = isclose(quad_obj.float_x, x_targ, abs_tol=0.1)
+    y_tol = isclose(quad_obj.float_y, y_targ, abs_tol=0.1)
 
     while x_tol==False and y_tol==False:
 
-        wpt = RTA_Gate(float_x, float_y, float_xdot, float_ydot, 
-                        obstacle_list, target, current_mode, safe_complete, cur_wpt)
+        wpt = RTA_Gate(quad_obj.float_x,quad_obj.float_y,quad_obj.float_xdot,
+        	quad_obj.float_ydot,obstacle_list,target,current_mode,safe_complete,cur_wpt)
 
         # vehicle_x    = quad_pose_x
         # vehicle_y    = quad_pose_y
@@ -189,12 +139,12 @@ def mission():
         x_rta = cur_wpt[0] 
         y_rta = cur_wpt[1]
 
-        pose_stamp.pose.position.x = x_rta
-        pose_stamp.pose.position.y = y_rta
-        pose_stamp.pose.position.z = z
+        quad_obj.pose_stamp.pose.position.x = x_rta
+        quad_obj.pose_stamp.pose.position.y = y_rta
+        quad_obj.pose_stamp.pose.position.z = z
 
-        x_tol = isclose(float_x, x_targ, abs_tol=0.25)
-        y_tol = isclose(float_y, y_targ, abs_tol=0.25)
+        x_tol = isclose(quad_obj.float_x, x_targ, abs_tol=0.1)
+        y_tol = isclose(quad_obj.float_y, y_targ, abs_tol=0.1)
         print x_rta, float_x, x_targ, x_tol 
         # print x_tol 
 
@@ -278,69 +228,81 @@ def RTA_Gate(vehicle_x, vehicle_y, vehicle_xdot, vehicle_ydot,
                 print("def bottom")
                 return wpt_performance, current_mode, safe_complete
 
-# Allows for enough time to cleanly kill the node #
-###################################################
-def kill():
-    print "\n*Cough cough*"
-    rospy.sleep(.6)
-    print "\nI'm..."
-    rospy.sleep(.5)
-    print "\ndying"
-    rospy.sleep(.5)
-    rospy.signal_shutdown("Time to sleep!")
-    os.system('cls' if os.name == 'nt' else 'clear')
-
 #########
 # Start #
 #########
 
 if __name__ == '__main__':
-    global x, y, z, wpt_out
 
-    rospy.init_node('RTA_Gate', anonymous=False)
+	rospy.init_node('RTA_Gate', anonymous=False)
 
-    # Subscribers
-    state_sub      = rospy.Subscriber('/mavros/state', State)
+	rate = rospy.Rate(50) 
 
-    # Publishers
-    setpoint_pub   = rospy.Publisher('/mavros/setpoint_position/local', PoseStamped, queue_size=10)
-    velocity_pub   = rospy.Publisher('/mavros/setpoint_velocity/cmd_vel', TwistStamped, queue_size=10)
-    # local_position = rospy.Publisher('/mavros/local_position/pose', PoseStamped)
+	# Time setup
+	now       = rospy.Time.now()
+	zero_time = rospy.Time()
 
-    # Services
-    arming_serv    = rospy.ServiceProxy('/mavros/cmd/arming', CommandBool)
-    flight_mode    = rospy.ServiceProxy('/mavros/set_mode', SetMode)
-    takeoffService = rospy.ServiceProxy('/mavros/cmd/takeoff', CommandTOL)
+	# Subscribers
+	state_sub      = rospy.Subscriber('/mavros/state', State)
+	quad_pose_sub  = rospy.Subscriber('/mavros/local_position/pose', PoseStamped,
+	                            pose_callback, queue_size=10)
+	velo_sub       = rospy.Subscriber('/mavros/local_position/velocity', TwistStamped,
+	                            velocity_callback, queue_size=10)
 
-    rate = rospy.Rate(20.0)
+	obs_l_pose_sub = rospy.Subscriber('/vicon/obs_l/obs_l', TransformStamped,
+	                            obs_l_callback, queue_size=10)
+	obs_s_pose_sub = rospy.Subscriber('/vicon/obs_s/obs_s', TransformStamped,
+	                            obs_s_callback, queue_size=10)
 
-    choice = '1'
 
-    while not rospy.is_shutdown() and choice in ['1', '2', '3']:
-        os.system('cls' if os.name == 'nt' else 'clear')
-        menu()
-        choice = raw_input("Enter your input: ");
-        x = 0
-        y = 0
-        z = 0
+	# Publishers
+	setpnt_pub     = rospy.Publisher('/mavros/setpoint_position/local', PoseStamped, queue_size=10)
 
-        if choice == '1':
-            print "Enter destination coordinates: \n"
-            x = int(raw_input('x = '))
-            y = int(raw_input('y = '))
-            z = int(raw_input('z = '))    
 
-            if z <= 0:
-                print("z must be greater than 0\nAutomatically setting z = 1")
-                rospy.sleep(2)
-                z = 1
+	# velocity_pub   = rospy.Publisher('/mavros/setpoint_velocity/cmd_vel', TwistStamped, queue_size=10)
+	# local_position = rospy.Publisher('/mavros/local_position/pose', PoseStamped)
 
-            arm_takeoff()
-            # mission()
+	# Services
+	setmod_serv  = rospy.ServiceProxy('/mavros/set_mode', SetMode)
+	arming_serv  = rospy.ServiceProxy('/mavros/cmd/arming', CommandBool)
+	takeoff_serv = rospy.ServiceProxy('/mavros/cmd/takeoff', CommandTOL)
+	landing_serv = rospy.ServiceProxy('/mavros/cmd/land', CommandTOL)
 
-        if choice == '2':
-            offb_set_mode = flight_mode(custom_mode="AUTO.LAND")
+	print "Enter destination coordinates: \n"
+	x = int(raw_input('x = '))
+	y = int(raw_input('y = '))
+	z = int(raw_input('z = '))
 
-        if choice == '3':
-            kill()
-            break
+	if x>1.8 or x<-1.3:
+		print "ERROR: x waypoint outside test area"
+		quit()
+
+	if y>1.4 or y<-1.5:
+		print "ERROR: y waypoint outside test area"
+		quit()
+
+	if z>2 or z<0:
+		print "ERROR: z waypoint outside test area"
+		quit()
+
+	while not rospy.is_shutdown():
+		setpnt_pub.publish(quad_obj.quad_goal)
+		rate.sleep()
+		if quad_obj.state.mode=="OFFBOARD":
+			if not quad_obj.state.armed==True:
+				print "Arming..."
+				rospy.wait_for_service('/mavros1/cmd/arming')
+				arming_serv(True)
+				rospy.sleep(2)
+
+			print "Taking Off..."
+			quad_obj.quad_goal.pose.position.x = 1
+			quad_obj.quad_goal.pose.position.y = 1
+			quad_obj.quad_goal.pose.position.z = 1
+
+			for i in range(500):
+				setpnt_pub.publish(quad_obj.quad_goal)
+				rate.sleep()
+			break
+
+	mission(x,y,z,rate)
