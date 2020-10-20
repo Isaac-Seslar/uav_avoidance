@@ -11,7 +11,7 @@ import std_msgs
 import tf 
 import sys, select, os, tty, termios
 
-from geometry_msgs.msg import PoseStamped, TwistStamped, TransformStamped
+from geometry_msgs.msg import PoseStamped, TwistStamped, TransformStamped, Point, Vector3
 from numpy import linspace, array
 from mavros_msgs.msg import GlobalPositionTarget, State
 from mavros_msgs.srv import CommandBool, SetMode, CommandTOL
@@ -26,16 +26,16 @@ from perform_cont import *
 #############
 
 class obs_obj:
-	obs_l = PoseStamped()
-	obs_s = PoseStamped()
+	obs_l = Vector3()
+	obs_s = Vector3()
 
 class quad_obj:
-	vehicle = PoseStamped()
+	vehicle = Point()
 	float_x = float() 
 	float_y = float()
 	float_z = float()
 
-	vehicle_dot = TwistStamped()
+	vehicle_dot = Vector3()
 	float_xdot  = float()
 	float_ydot  = float()
 	float_zdot  = float()
@@ -92,16 +92,20 @@ def velocity_callback(msg):
 def obs_l_callback(msg):
 	obs_obj.obs_l = msg.transform.translation
 	
-
 def obs_s_callback(msg):
 	obs_obj.obs_s = msg.transform.translation
+
+def state_callback(st_msg):
+	quad_obj.state = st_msg
 	
 # Generates waypoints for the quadrotor to follow #
 ###################################################
 def mission(x,y,z,rate):
     # Defines where the obstacles are on the grid
-    obstacle_list = np.array([obs_obj.obs_l.x,obs_obj.obs_l.y],
-    						[obs_obj.obs_s.x,obs_obj.obs_s.y])
+    obstacle_list = np.array([[obs_obj.obs_l.x,obs_obj.obs_l.y],
+    						[obs_obj.obs_s.x,obs_obj.obs_s.y]])
+
+    # obstacle_list = np.array([1,1],[2,-1],[3,3])
 
     # Initialize values for RTA_Gate()
     current_mode  = 0
@@ -139,16 +143,16 @@ def mission(x,y,z,rate):
         x_rta = cur_wpt[0] 
         y_rta = cur_wpt[1]
 
-        quad_obj.pose_stamp.pose.position.x = x_rta
-        quad_obj.pose_stamp.pose.position.y = y_rta
-        quad_obj.pose_stamp.pose.position.z = z
+        quad_obj.quad_goal.pose.position.x = x_rta
+        quad_obj.quad_goal.pose.position.y = y_rta
+        quad_obj.quad_goal.pose.position.z = z
 
         x_tol = isclose(quad_obj.float_x, x_targ, abs_tol=0.1)
         y_tol = isclose(quad_obj.float_y, y_targ, abs_tol=0.1)
-        print x_rta, float_x, x_targ, x_tol 
+        print x_rta, quad_obj.float_x, x_targ, x_tol 
         # print x_tol 
 
-        setpoint_pub.publish(pose_stamp)
+        setpnt_pub.publish(quad_obj.quad_goal)
 
         rate.sleep()
 
@@ -243,10 +247,10 @@ if __name__ == '__main__':
 	zero_time = rospy.Time()
 
 	# Subscribers
-	state_sub      = rospy.Subscriber('/mavros/state', State)
-	quad_pose_sub  = rospy.Subscriber('/mavros/local_position/pose', PoseStamped,
+	state_sub   = rospy.Subscriber('/mavros1/state', State, state_callback, queue_size=10)
+	quad_pose_sub  = rospy.Subscriber('/mavros1/local_position/pose', PoseStamped,
 	                            pose_callback, queue_size=10)
-	velo_sub       = rospy.Subscriber('/mavros/local_position/velocity', TwistStamped,
+	velo_sub       = rospy.Subscriber('/mavros1/local_position/velocity', TwistStamped,
 	                            velocity_callback, queue_size=10)
 
 	obs_l_pose_sub = rospy.Subscriber('/vicon/obs_l/obs_l', TransformStamped,
@@ -256,22 +260,24 @@ if __name__ == '__main__':
 
 
 	# Publishers
-	setpnt_pub     = rospy.Publisher('/mavros/setpoint_position/local', PoseStamped, queue_size=10)
+	setpnt_pub     = rospy.Publisher('/mavros1/setpoint_position/local', PoseStamped, queue_size=10)
 
 
 	# velocity_pub   = rospy.Publisher('/mavros/setpoint_velocity/cmd_vel', TwistStamped, queue_size=10)
 	# local_position = rospy.Publisher('/mavros/local_position/pose', PoseStamped)
 
 	# Services
-	setmod_serv  = rospy.ServiceProxy('/mavros/set_mode', SetMode)
-	arming_serv  = rospy.ServiceProxy('/mavros/cmd/arming', CommandBool)
-	takeoff_serv = rospy.ServiceProxy('/mavros/cmd/takeoff', CommandTOL)
-	landing_serv = rospy.ServiceProxy('/mavros/cmd/land', CommandTOL)
+	setmod_serv  = rospy.ServiceProxy('/mavros1/set_mode', SetMode)
+	arming_serv  = rospy.ServiceProxy('/mavros1/cmd/arming', CommandBool)
+	takeoff_serv = rospy.ServiceProxy('/mavros1/cmd/takeoff', CommandTOL)
+	landing_serv = rospy.ServiceProxy('/mavros1/cmd/land', CommandTOL)
+
+	# print ""
 
 	print "Enter destination coordinates: \n"
-	x = int(raw_input('x = '))
-	y = int(raw_input('y = '))
-	z = int(raw_input('z = '))
+	x = float(raw_input('x = '))
+	y = float(raw_input('y = '))
+	z = float(raw_input('z = '))
 
 	if x>1.8 or x<-1.3:
 		print "ERROR: x waypoint outside test area"
@@ -295,9 +301,10 @@ if __name__ == '__main__':
 				arming_serv(True)
 				rospy.sleep(2)
 
+
 			print "Taking Off..."
-			quad_obj.quad_goal.pose.position.x = 1
-			quad_obj.quad_goal.pose.position.y = 1
+			quad_obj.quad_goal.pose.position.x = quad_obj.vehicle.x
+			quad_obj.quad_goal.pose.position.y = quad_obj.vehicle.y
 			quad_obj.quad_goal.pose.position.z = 1
 
 			for i in range(500):
