@@ -1,0 +1,1 @@
+/home/isaac/uav_avoidance/devel/.private/vicon_bridge/share/vicon_bridge/cmake/vicon_bridgeConfig.cmake

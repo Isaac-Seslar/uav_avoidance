@@ -1,5 +1,5 @@
 # Generated with SMOP  0.41-beta
-from libsmop import *
+# from libsmop import *
 # GenerateTrajectoryPoint.m
 
     # FUNCTION: GenerateTrajectoryPoint
@@ -18,12 +18,12 @@ from libsmop import *
 #      Time vector for set points defined in initFunction
     
     
-@function
-def GenerateTrajectoryPoint(t=None,*args,**kwargs):
+# @function
+def GenerateTrajectoryPoint(t):#,*args,**kwargs):
     varargin = GenerateTrajectoryPoint.varargin
     nargin = GenerateTrajectoryPoint.nargin
 
-    
+ 
     
     if isempty(jointPositions):
         disp(' Initializing trajectory Gen')
@@ -104,7 +104,7 @@ if __name__ == '__main__':
     pass
     
     
-@function
+# @function
 def initGenerator(*args,**kwargs):
     varargin = initGenerator.varargin
     nargin = initGenerator.nargin
@@ -131,7 +131,7 @@ if __name__ == '__main__':
     pass
     
     
-@function
+# @function
 def min_jerk(xi=None,xf=None,T=None,D=None,*args,**kwargs):
     varargin = min_jerk.varargin
     nargin = min_jerk.nargin
@@ -159,6 +159,7 @@ def min_jerk(xi=None,xf=None,T=None,D=None,*args,**kwargs):
     a=((dot(2,a2) + multiply(dot(6,a3),T) + multiply(dot(12,a4),T ** 2) + multiply(dot(20,a5),T ** 3)) / D ** 2)
 # GenerateTrajectoryPoint.m:94
     return x,v,a
+    print x, v, a
     
 if __name__ == '__main__':
     pass
