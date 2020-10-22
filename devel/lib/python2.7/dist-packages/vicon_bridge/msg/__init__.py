@@ -1,0 +1,1 @@
+/home/isaac/uav_avoidance/devel/.private/vicon_bridge/lib/python2.7/dist-packages/vicon_bridge/msg/__init__.py
