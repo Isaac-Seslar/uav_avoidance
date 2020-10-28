@@ -122,16 +122,16 @@ def mission():
 	# x_tol = isclose(quad_obj.float_x, x_targ, abs_tol=0.1)
 	# y_tol = isclose(quad_obj.float_y, y_targ, abs_tol=0.1)
 
-	safe_radius = 0.1
+	safe_radius = 1
 	# print char
 
 	while not rospy.is_shutdown():
 		small_obs = np.array([obs_obj.obs_s.x,obs_obj.obs_s.y])
-		wpt = performance_controller(quad_obj.vehicle.x, quad_obj.vehicle.y, small_obs,safe_radius)
+		wpt = performance_controller(quad_obj.vehicle.x, quad_obj.vehicle.y, small_obs, safe_radius)
 
 		quad_obj.quad_goal.pose.position.x = wpt[0]
 		quad_obj.quad_goal.pose.position.y = wpt[1]
-		quad_obj.quad_goal.pose.position.z = 1
+		quad_obj.quad_goal.pose.position.z = 0.5
 
 		# x_tol = isclose(quad_obj.float_x, x_targ, abs_tol=0.1)
 		# y_tol = isclose(quad_obj.float_y, y_targ, abs_tol=0.1)
@@ -147,47 +147,49 @@ def performance_controller(vehicle_x, vehicle_y, target, safe_radius):
 	# Compute a line from vehicle to target
 	slope = (target[1] - vehicle_y)/(target[0] - vehicle_x)
 
-	target = safe_point(vehicle_x,vehicle_y,target[0],target[1],safe_radius,slope)
-	print target[0],target[1]
-	direction = np.sign(target[0] - vehicle_x)
+	safe_target = safe_point(vehicle_x,vehicle_y,target[0],target[1],safe_radius,slope)
+	print('safe_target x,y:')
+	print safe_target[0],safe_target[1]
+	direction = np.sign(safe_target[0] - vehicle_x)
 
 	step = 1.0
 
 	x_next = vehicle_x + direction*step
-	if direction > 0 and x_next < target[0]:
+	if direction > 0 and x_next < safe_target[0]:
 		x_dif = step
-	elif direction > 0 and x_next >= target[0]:
-		x_dif = target[0] - vehicle_x
-	elif direction < 0 and x_next > target[0]:
+	elif direction > 0 and x_next >= safe_target[0]:
+		x_dif = safe_target[0] - vehicle_x
+	elif direction < 0 and x_next > safe_target[0]:
 		x_dif = -step
 	else:
-		x_dif = target[0] - vehicle_x
+		x_dif = safe_target[0] - vehicle_x
 
 	y_next = vehicle_y + slope*x_dif
 	x_next = vehicle_x + x_dif
 
 	return np.array([x_next, y_next])
 
-def safe_point(x_q,y_q,threat_x,threat_y,r,sl):
+def safe_point(x_q,y_q,threat_x,threat_y,r,m):
 
-	d = math.tan((threat_y - y_q)/(threat_x - x_q))
-	# mag_dist = sqrt((threat_x - vehicle_x)**2 + (threat_y - vehicle_y)**2)
+	# d = math.tan((threat_y - y_q)/(threat_x - x_q))
+	d = math.sqrt((threat_x - x_q)**2 + (threat_y - y_q)**2)
 	# unit     = distance/mag_dist
 
-	# x_s_pos = (x_q + (d**2*sl**2 + d**2 - 2*d*r*sl**2 - 2*d*r + r**2*sl**2 + r**2 - sl**2*x_q**2)**(1/2))/(sl**2 + 1)
-	# x_s_neg = (x_q - (d**2*sl**2 + d**2 - 2*d*r*sl**2 - 2*d*r + r**2*sl**2 + r**2 - sl**2*x_q**2)**(1/2))/(sl**2 + 1)
-	x_s_pos = (x_q - 2*sl*y_q + (d**2*sl**2 + d**2 - 2*d*r*sl**2 - 2*d*r + r**2*sl**2 + r**2 - sl**2*x_q**2 - 4*sl*x_q*y_q - 4*y_q**2)**(1/2))/(sl**2 + 1)
- 	x_s_neg = -(2*sl*y_q - x_q + (d**2*sl**2 + d**2 - 2*d*r*sl**2 - 2*d*r + r**2*sl**2 + r**2 - sl**2*x_q**2 - 4*sl*x_q*y_q - 4*y_q**2)**(1/2))/(sl**2 + 1)
+	x_s_pos = (x_q + m**2*x_q + math.sqrt((m**2 + 1)*(d - r)**2))/(m**2 + 1)
+ 	x_s_neg = (x_q + m**2*x_q - math.sqrt((m**2 + 1)*(d - r)**2))/(m**2 + 1)
+
+	neg = -(2*sl*y_q - x_q + (d**2*sl**2 + d**2 - 2*d*r*sl**2 - 2*d*r + r**2*sl**2 + r**2 - sl**2*x_q**2 - 4*sl*x_q*y_q - 4*y_q**2)**(1/2))/(sl**2 + 1)
 	print ('x pos:')
 	print x_s_pos
 	print ('x neg')
 	print x_s_neg
+
 	if (x_s_pos>=x_q and x_s_pos<threat_x) or (x_s_pos<=x_q and x_s_pos>threat_x):
-		y_s = x_s_pos*sl + y_q
+		y_s = y_q + (x_q - x_s_pos) * m
 		return np.array([x_s_pos, y_s])
 
 	else:
-		y_s = x_s_neg*sl + y_q
+		y_s = y_q + (x_q - x_s_pos) * m
 		return np.array([x_s_neg, y_s])
 
 
