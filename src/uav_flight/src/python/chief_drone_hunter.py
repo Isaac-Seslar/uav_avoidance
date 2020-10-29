@@ -54,31 +54,31 @@ class quad_obj:
 # Actively watches for keypress #
 #################################
 def getch():
-    fd = sys.stdin.fileno()
-    old_settings = termios.tcgetattr(fd)
-    try:
-        tty.setraw(sys.stdin.fileno())
-        ch = sys.stdin.read(1)
+	fd = sys.stdin.fileno()
+	old_settings = termios.tcgetattr(fd)
+	try:
+		tty.setraw(sys.stdin.fileno())
+		ch = sys.stdin.read(1)
  
-    finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-    return ch
+	finally:
+		termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+	return ch
 
 # Tolerance function #
 ######################
 def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
-    return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
+	return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
 
 # Callback functions for local pose #
 #####################################
 def pose_callback(msg):
-    quad_obj.vehicle.x = msg.pose.position.x
-    quad_obj.vehicle.y = msg.pose.position.y
-    quad_obj.vehicle.z = msg.pose.position.z
+	quad_obj.vehicle.x = msg.pose.position.x
+	quad_obj.vehicle.y = msg.pose.position.y
+	quad_obj.vehicle.z = msg.pose.position.z
 
-    quad_obj.float_x = float(msg.pose.position.x) 
-    quad_obj.float_y = float(msg.pose.position.y)
-    quad_obj.float_z = float(msg.pose.position.z)
+	quad_obj.float_x = float(msg.pose.position.x) 
+	quad_obj.float_y = float(msg.pose.position.y)
+	quad_obj.float_z = float(msg.pose.position.z)
 
 def velocity_callback(msg):
 	quad_obj.vehicle_dot.x = msg.twist.linear.x
@@ -122,16 +122,16 @@ def mission():
 	# x_tol = isclose(quad_obj.float_x, x_targ, abs_tol=0.1)
 	# y_tol = isclose(quad_obj.float_y, y_targ, abs_tol=0.1)
 
-	char = 1
+	safe_radius = 1
 	# print char
 
 	while not rospy.is_shutdown():
 		small_obs = np.array([obs_obj.obs_s.x,obs_obj.obs_s.y])
-		wpt = Performance_Controller(quad_obj.vehicle.x, quad_obj.vehicle.y, small_obs)
+		wpt = performance_controller(quad_obj.vehicle.x, quad_obj.vehicle.y, small_obs, safe_radius)
 
 		quad_obj.quad_goal.pose.position.x = wpt[0]
 		quad_obj.quad_goal.pose.position.y = wpt[1]
-		quad_obj.quad_goal.pose.position.z = 1
+		quad_obj.quad_goal.pose.position.z = 0.5
 
 		# x_tol = isclose(quad_obj.float_x, x_targ, abs_tol=0.1)
 		# y_tol = isclose(quad_obj.float_y, y_targ, abs_tol=0.1)
@@ -141,30 +141,56 @@ def mission():
 		setpnt_pub.publish(quad_obj.quad_goal)
 
 		rate.sleep()
-		
 
-def Performance_Controller(vehicle_x, vehicle_y, target):
-    # Compute a line from vehicle to target
-    slope = (target[1] - vehicle_y)/(target[0] - vehicle_x)
 
-    direction = np.sign(target[0] - vehicle_x)
+def performance_controller(vehicle_x, vehicle_y, target, safe_radius):
+	# Compute a line from vehicle to target
+	slope = (target[1] - vehicle_y)/(target[0] - vehicle_x)
 
-    step = 1.0
+	safe_target = safe_point(vehicle_x,vehicle_y,target[0],target[1],safe_radius,slope)
+	print('safe_target x,y:')
+	print safe_target[0],safe_target[1]
+	direction = np.sign(safe_target[0] - vehicle_x)
 
-    x_next = vehicle_x + direction*step
-    if direction > 0 and x_next < target[0]:
-        x_dif = step
-    elif direction > 0 and x_next >= target[0]:
-        x_dif = target[0] - vehicle_x
-    elif direction < 0 and x_next > target[0]:
-        x_dif = -step
-    else:
-        x_dif = target[0] - vehicle_x
+	step = 1.0
 
-    y_next = vehicle_y + slope*x_dif
-    x_next = vehicle_x + x_dif
+	x_next = vehicle_x + direction*step
+	if direction > 0 and x_next < safe_target[0]:
+		x_dif = step
+	elif direction > 0 and x_next >= safe_target[0]:
+		x_dif = safe_target[0] - vehicle_x
+	elif direction < 0 and x_next > safe_target[0]:
+		x_dif = -step
+	else:
+		x_dif = safe_target[0] - vehicle_x
 
-    return np.array([x_next, y_next])
+	y_next = vehicle_y + slope*x_dif
+	x_next = vehicle_x + x_dif
+
+	return np.array([x_next, y_next])
+
+def safe_point(x_q,y_q,threat_x,threat_y,r,m):
+
+	# d = math.tan((threat_y - y_q)/(threat_x - x_q))
+	d = math.sqrt((threat_x - x_q)**2 + (threat_y - y_q)**2)
+	# unit     = distance/mag_dist
+
+	x_s_pos = (x_q + m**2*x_q + math.sqrt((m**2 + 1)*(d - r)**2))/(m**2 + 1)
+ 	x_s_neg = (x_q + m**2*x_q - math.sqrt((m**2 + 1)*(d - r)**2))/(m**2 + 1)
+
+	neg = -(2*sl*y_q - x_q + (d**2*sl**2 + d**2 - 2*d*r*sl**2 - 2*d*r + r**2*sl**2 + r**2 - sl**2*x_q**2 - 4*sl*x_q*y_q - 4*y_q**2)**(1/2))/(sl**2 + 1)
+	print ('x pos:')
+	print x_s_pos
+	print ('x neg')
+	print x_s_neg
+
+	if (x_s_pos>=x_q and x_s_pos<threat_x) or (x_s_pos<=x_q and x_s_pos>threat_x):
+		y_s = y_q + (x_q - x_s_pos) * m
+		return np.array([x_s_pos, y_s])
+
+	else:
+		y_s = y_q + (x_q - x_s_pos) * m
+		return np.array([x_s_neg, y_s])
 
 
 #########
@@ -173,7 +199,7 @@ def Performance_Controller(vehicle_x, vehicle_y, target):
 
 if __name__ == '__main__':
 
-	rospy.init_node('RTA_Gate', anonymous=False)
+	rospy.init_node('RTA_Gate_chief', anonymous=False)
 
 	rate = rospy.Rate(50) 
 
@@ -182,30 +208,30 @@ if __name__ == '__main__':
 	zero_time = rospy.Time()
 
 	# Subscribers
-	state_sub   = rospy.Subscriber('/mavros1/state', State, state_callback, queue_size=10)
-	quad_pose_sub  = rospy.Subscriber('/mavros1/local_position/pose', PoseStamped,
-	                            pose_callback, queue_size=10)
-	velo_sub       = rospy.Subscriber('/mavros1/local_position/velocity', TwistStamped,
-	                            velocity_callback, queue_size=10)
+	state_sub      = rospy.Subscriber('/chief/state', State, state_callback, queue_size=10)
+	quad_pose_sub  = rospy.Subscriber('/chief/local_position/pose', PoseStamped,
+								pose_callback, queue_size=10)
+	velo_sub       = rospy.Subscriber('/chief/local_position/velocity', TwistStamped,
+								velocity_callback, queue_size=10)
 
 	obs_l_pose_sub = rospy.Subscriber('/vicon/obs_l/obs_l', TransformStamped,
-	                            obs_l_callback, queue_size=10)
+								obs_l_callback, queue_size=10)
 	obs_s_pose_sub = rospy.Subscriber('/vicon/obs_s/obs_s', TransformStamped,
-	                            obs_s_callback, queue_size=10)
+								obs_s_callback, queue_size=10)
 
 
 	# Publishers
-	setpnt_pub     = rospy.Publisher('/mavros1/setpoint_position/local', PoseStamped, queue_size=10)
+	setpnt_pub     = rospy.Publisher('/chief/setpoint_position/local', PoseStamped, queue_size=10)
 
 
 	# velocity_pub   = rospy.Publisher('/mavros/setpoint_velocity/cmd_vel', TwistStamped, queue_size=10)
 	# local_position = rospy.Publisher('/mavros/local_position/pose', PoseStamped)
 
 	# Services
-	setmod_serv  = rospy.ServiceProxy('/mavros1/set_mode', SetMode)
-	arming_serv  = rospy.ServiceProxy('/mavros1/cmd/arming', CommandBool)
-	takeoff_serv = rospy.ServiceProxy('/mavros1/cmd/takeoff', CommandTOL)
-	landing_serv = rospy.ServiceProxy('/mavros1/cmd/land', CommandTOL)
+	setmod_serv  = rospy.ServiceProxy('/chief/set_mode', SetMode)
+	arming_serv  = rospy.ServiceProxy('/chief/cmd/arming', CommandBool)
+	takeoff_serv = rospy.ServiceProxy('/chief/cmd/takeoff', CommandTOL)
+	landing_serv = rospy.ServiceProxy('/chief/cmd/land', CommandTOL)
 
 	print "Track?"
 
@@ -222,7 +248,7 @@ if __name__ == '__main__':
 			if quad_obj.state.mode=="OFFBOARD":
 				if not quad_obj.state.armed==True:
 					print "Arming..."
-					rospy.wait_for_service('/mavros1/cmd/arming')
+					rospy.wait_for_service('/chief/cmd/arming')
 					arming_serv(True)
 					rospy.sleep(2)
 
