@@ -85,7 +85,7 @@ def Safe_Controller_Init (vehicle_x, vehicle_y, vehicle_xdot, vehicle_ydot, targ
     #r = arcs[x_ind][y_ind]
 
     #For test purposes:
-    r = 5
+    r = 0.25
 
     out_x = target[0] - obstacle[0]
     out_y = target[1] - obstacle[1]

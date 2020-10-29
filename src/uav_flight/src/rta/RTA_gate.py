@@ -10,6 +10,7 @@ import mavros
 import std_msgs
 import tf 
 import sys, select, os, tty, termios
+import pandas as pd
 
 from geometry_msgs.msg import PoseStamped, TwistStamped, TransformStamped, Point, Vector3
 from numpy import linspace, array
@@ -24,6 +25,9 @@ from Performance_Controller import *
 #############
 # Class Def #
 #############
+
+class plot:
+    waypoint = {'x_safe':[],'y_safe':[]}
 
 class obs_obj:
 	obs_l = Vector3()
@@ -105,6 +109,9 @@ def mission(x,y,z,rate):
     obstacle_list = np.array([[obs_obj.obs_l.x,obs_obj.obs_l.y],
     						[obs_obj.obs_s.x,obs_obj.obs_s.y]])
 
+    plots = {'x_perf':[],'y_perf':[]}
+    # obstacle_list = np.array([[100,100],[-100,100]])
+
     # obstacle_list = np.array([1,1],[2,-1],[3,3])
 
     # Initialize values for RTA_Gate()
@@ -143,12 +150,15 @@ def mission(x,y,z,rate):
         x_rta = cur_wpt[0] 
         y_rta = cur_wpt[1]
 
+        plots['x_perf'].append(x_rta)
+        plots['y_perf'].append(y_rta)
+
         quad_obj.quad_goal.pose.position.x = x_rta
         quad_obj.quad_goal.pose.position.y = y_rta
         quad_obj.quad_goal.pose.position.z = z
 
-        x_tol = isclose(quad_obj.float_x, x_targ, abs_tol=0.1)
-        y_tol = isclose(quad_obj.float_y, y_targ, abs_tol=0.1)
+        x_tol = isclose(quad_obj.float_x, x_targ, abs_tol=0.5)
+        y_tol = isclose(quad_obj.float_y, y_targ, abs_tol=0.5)
         # print x_rta, quad_obj.float_x, x_targ, x_tol 
         # print x_tol 
 
@@ -156,13 +166,21 @@ def mission(x,y,z,rate):
 
         rate.sleep()
 
+    safe_plot = pd.DataFrame(plot.waypoint)
+    safe_plot.to_csv('safe_cont.csv',index=False)
+
+    perf_plot = pd.DataFrame(plots)
+    perf_plot.to_csv('perf_cont.csv',index=False)
+
 # Responsible for switching between performance and safe controller #
 def RTA_Gate(vehicle_x, vehicle_y, vehicle_xdot, vehicle_ydot, obstacle_list,
 			 target, current_mode, safe_complete, cur_wpt):
         global wpt_safe_list  #Parameters:
 
+
+
         obs_to_consider = 2 #Number of obstacles to consider in avoidance
-        obs_radius = 0.5 #Let's assume each obstacle is circular with radius obs_radius
+        obs_radius = 0.25 #Let's assume each obstacle is circular with radius obs_radius
         tol = 0.5 #Time (seconds) tolerance to avoid obstacle (3 means should always have a 3 second buffer between vehicle and obstacle)
         violation = 0 #Is a future collision detected?
 
@@ -230,18 +248,26 @@ def RTA_Gate(vehicle_x, vehicle_y, vehicle_xdot, vehicle_ydot, obstacle_list,
                 start_safe = 1
 
                 wpt_safe_list = Safe_Controller_Init(vehicle_x, vehicle_y, vehicle_xdot, vehicle_ydot, target, obstacle_list[i])
+                #wpt_performance = Performance_Controller(vehicle_x, vehicle_y, target) ##CHANGe THIS
                 print(wpt_safe_list)
                 #plt.plot(wpt_safe_list[:, 0], wpt_safe_list[:, 1])
                 #plt.show()
+                plot.waypoint['x_safe'].append(wpt_safe_list[0][0])################chanfe
+                plot.waypoint['y_safe'].append(wpt_safe_list[0][1])###############change
                 return wpt_safe_list[0],  current_mode, safe_complete
+                
+                # return wpt_performance, current_mode, safe_complete ######CHANGE THIS
 
         elif current_mode == 1 and safe_complete == 0:
             print('continuing in safe mode')
             #Continue to execute trajectory until completed
             start_safe = 0
             wpt_safe, safe_complete = Safe_Controller(vehicle_x, vehicle_y, target, cur_wpt, wpt_safe_list)
-
+            # wpt_performance = Performance_Controller(vehicle_x, vehicle_y, target) #################CHANGE THIS
+            plot.waypoint['x_safe'].append(wpt_safe[0])################chanfe
+            plot.waypoint['y_safe'].append(wpt_safe[1])###############change
             return wpt_safe, current_mode, safe_complete
+            # return wpt_performance, current_mode, safe_complete ###########################CHANGE THIS
 
         else:
             print('switching back to normal mode')
@@ -270,7 +296,7 @@ if __name__ == '__main__':
 	state_sub   = rospy.Subscriber('/mavros1/state', State, state_callback, queue_size=10)
 	quad_pose_sub  = rospy.Subscriber('/mavros1/local_position/pose', PoseStamped,
 	                            pose_callback, queue_size=10)
-	velo_sub       = rospy.Subscriber('/mavros1/local_position/velocity', TwistStamped,
+	velo_sub       = rospy.Subscriber('/mavros1/local_position/velocity_body', TwistStamped,
 	                            velocity_callback, queue_size=10)
 
 	obs_l_pose_sub = rospy.Subscriber('/vicon/obs_l/obs_l', TransformStamped,
@@ -333,7 +359,7 @@ if __name__ == '__main__':
 			print "Taking Off..."
 			quad_obj.quad_goal.pose.position.x = quad_obj.vehicle.x
 			quad_obj.quad_goal.pose.position.y = quad_obj.vehicle.y
-			quad_obj.quad_goal.pose.position.z = 1
+			quad_obj.quad_goal.pose.position.z = 1.5
 
 			for i in range(200):
 				setpnt_pub.publish(quad_obj.quad_goal)
